@@ -50,6 +50,10 @@ public final class EnchantmentEventHandler {
             var y = tag.getDouble("surrender_seeker_y");
             var z = tag.getDouble("surrender_seeker_z");
             var entity = event.getEntityLiving();
+            if (entity.distanceToSqr(x, y, z) > 400.0D) {
+                return;
+            }
+
             entity.teleportTo(x, y, z);
             entity.swing(event.getHand());
             entity.playSound(SoundEvents.ENDERMAN_TELEPORT, 1, 1);
