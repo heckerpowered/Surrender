@@ -100,8 +100,7 @@ public final class EnchantmentEventHandler {
             var regeneratorLevel = EnchantmentHelper.getEnchantmentLevel(SurrenderEnchantments.REGENERATOR.get(),
                     source);
             if (regeneratorLevel > 0) {
-                var healAmount = regeneratorLevel * 0.2F
-                        + regeneratorLevel * 0.02F * (source.getMaxHealth() - source.getHealth());
+                var healAmount = +regeneratorLevel * 0.02F * (source.getMaxHealth() - source.getHealth());
                 if (source.getHealth() <= source.getMaxHealth() * 0.25) {
                     healAmount *= 3;
                 } else if (source.getHealth() <= source.getMaxHealth() * 0.5) {
@@ -109,7 +108,6 @@ public final class EnchantmentEventHandler {
                 }
 
                 source.heal(healAmount);
-                source.setAbsorptionAmount(source.getAbsorptionAmount() + event.getAmount() * 0.04F * regeneratorLevel);
             }
         }
     }
