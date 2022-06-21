@@ -1,0 +1,13 @@
+{
+    "required": true,
+    "package": "heckerpowered.surrender.mixin",
+    "refmap": "mixins.surrender.refmap.json",
+    "mixins": [
+        "MixinPlayer"
+    ],
+    "client": [],
+    "server": [],
+    "injectors": {
+        "defaultRequire": 1
+    }
+}
