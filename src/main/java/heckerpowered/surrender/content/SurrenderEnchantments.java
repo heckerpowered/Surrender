@@ -1,6 +1,8 @@
 package heckerpowered.surrender.content;
 
 import heckerpowered.surrender.SurrenderMod;
+import heckerpowered.surrender.content.enchantment.GuardianEnchantment;
+import heckerpowered.surrender.content.enchantment.RegeneratorEnchantment;
 import heckerpowered.surrender.content.enchantment.SeekerEnchantment;
 import net.minecraft.world.item.enchantment.Enchantment;
 import net.minecraftforge.registries.DeferredRegister;
@@ -16,4 +18,8 @@ public final class SurrenderEnchantments {
 
     public static final RegistryObject<SeekerEnchantment> SEEKER = DEFERRED_REGISTER.register("seeker",
             SeekerEnchantment::new);
+    public static final RegistryObject<GuardianEnchantment> GUARDIAN = DEFERRED_REGISTER.register("guardian",
+            GuardianEnchantment::new);
+    public static final RegistryObject<RegeneratorEnchantment> REGENERATOR = DEFERRED_REGISTER.register("regenerator",
+            RegeneratorEnchantment::new);
 }

@@ -4,10 +4,12 @@ import net.minecraft.world.entity.EquipmentSlot;
 import net.minecraft.world.item.enchantment.Enchantment;
 import net.minecraft.world.item.enchantment.EnchantmentCategory;
 
-public final class SeekerEnchantment extends Enchantment {
-    public SeekerEnchantment() {
-        super(Rarity.RARE, EnchantmentCategory.WEAPON, new EquipmentSlot[] { EquipmentSlot.MAINHAND,
-                EquipmentSlot.OFFHAND });
+public final class GuardianEnchantment extends Enchantment {
+
+    public GuardianEnchantment() {
+        super(Rarity.VERY_RARE, EnchantmentCategory.ARMOR,
+                new EquipmentSlot[] { EquipmentSlot.HEAD, EquipmentSlot.CHEST,
+                        EquipmentSlot.LEGS, EquipmentSlot.FEET });
     }
 
     @Override

@@ -1,3 +1,5 @@
 {
-    "enchantment.surrender.seeker": "Seeker"
+    "enchantment.surrender.seeker": "Seeker",
+    "enchantment.surrender.guardian": "Guardian",
+    "enchantment.surrender.regenerator": "Regenerator"
 }

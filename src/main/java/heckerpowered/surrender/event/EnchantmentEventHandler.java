@@ -7,6 +7,7 @@ import net.minecraft.world.entity.LivingEntity;
 import net.minecraft.world.entity.player.Player;
 import net.minecraft.world.item.enchantment.EnchantmentHelper;
 import net.minecraftforge.event.entity.living.LivingDeathEvent;
+import net.minecraftforge.event.entity.living.LivingHurtEvent;
 import net.minecraftforge.event.entity.player.PlayerInteractEvent.RightClickItem;
 import net.minecraftforge.eventbus.api.SubscribeEvent;
 
@@ -69,6 +70,47 @@ public final class EnchantmentEventHandler {
             tag.remove("surrender_seeker_y");
             tag.remove("surrender_seeker_z");
             tag.remove("surrender_seeker_available");
+        }
+    }
+
+    @SubscribeEvent
+    public static final void onLivingHurt(final LivingHurtEvent event) {
+        final int guardian_cooldown = 20 * 30;
+
+        var entity = event.getEntityLiving();
+        if (entity.getHealth() - event.getAmount() <= entity.getMaxHealth() * 0.3) {
+            for (var armor : event.getEntityLiving().getArmorSlots()) {
+                var level = EnchantmentHelper.getTagEnchantmentLevel(SurrenderEnchantments.GUARDIAN.get(), armor);
+                var absoprtionAmount = 10 * level;
+                var tag = armor.getOrCreateTag();
+
+                var last_active_time = tag.getInt("surrender_guardian_last_active_time");
+                if (last_active_time == 0 || last_active_time > entity.tickCount
+                        || last_active_time + guardian_cooldown < entity.tickCount) {
+                    if (level > 0) {
+                        entity.setAbsorptionAmount(entity.getAbsorptionAmount() + absoprtionAmount);
+                        tag.putInt("surrender_guardian_last_active_time", entity.tickCount);
+                    }
+                }
+            }
+        }
+
+        var sourceEntity = event.getSource().getEntity();
+        if (sourceEntity != null && sourceEntity instanceof LivingEntity source) {
+            var regeneratorLevel = EnchantmentHelper.getEnchantmentLevel(SurrenderEnchantments.REGENERATOR.get(),
+                    source);
+            if (regeneratorLevel > 0) {
+                var healAmount = regeneratorLevel * 0.2F
+                        + regeneratorLevel * 0.02F * (source.getMaxHealth() - source.getHealth());
+                if (source.getHealth() <= source.getMaxHealth() * 0.25) {
+                    healAmount *= 3;
+                } else if (source.getHealth() <= source.getMaxHealth() * 0.5) {
+                    healAmount *= 2;
+                }
+
+                source.heal(healAmount);
+                source.setAbsorptionAmount(source.getAbsorptionAmount() + event.getAmount() * 0.04F * regeneratorLevel);
+            }
         }
     }
 }
