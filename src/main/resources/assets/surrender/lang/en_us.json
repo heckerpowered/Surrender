@@ -1,5 +1,11 @@
 {
     "enchantment.surrender.seeker": "Seeker",
     "enchantment.surrender.guardian": "Guardian",
-    "enchantment.surrender.regenerator": "Regenerator"
+    "enchantment.surrender.regenerator": "Regenerator",
+    "enchantment.surrender.shield_radier": "Shield Radier",
+    "enchantment.surrender.predator": "Predator",
+    "enchantment.surrender.blink": "Blink",
+    "enchantment.surrender.decisive_strike": "Decisive Strike",
+    "enchantment.surrender.last_stand": "Last Stand",
+    "enchantment.surrender.ripper": "Ripper"
 }

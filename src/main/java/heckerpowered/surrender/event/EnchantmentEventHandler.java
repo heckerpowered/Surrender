@@ -4,6 +4,9 @@ import heckerpowered.surrender.content.SurrenderEnchantments;
 import net.minecraft.sounds.SoundEvents;
 import net.minecraft.world.damagesource.DamageSource;
 import net.minecraft.world.entity.LivingEntity;
+import net.minecraft.world.entity.Mob;
+import net.minecraft.world.entity.MobType;
+import net.minecraft.world.entity.ai.attributes.Attributes;
 import net.minecraft.world.entity.player.Player;
 import net.minecraft.world.item.enchantment.EnchantmentHelper;
 import net.minecraftforge.event.entity.living.LivingDeathEvent;
@@ -45,7 +48,45 @@ public final class EnchantmentEventHandler {
 
     @SubscribeEvent
     public static final void onRightClickItem(final RightClickItem event) {
-        var tag = event.getItemStack().getTag();
+        var item = event.getItemStack();
+        var tag = item.getTag();
+
+        var blinkLevel = EnchantmentHelper.getTagEnchantmentLevel(SurrenderEnchantments.BLINK.get(), item);
+        if (blinkLevel > 0) {
+            var player = event.getPlayer();
+            int blink_cooldown = 20 * (6 - blinkLevel);
+
+            var last_active_time = tag.getInt("surrender_blink_last_active_time");
+            if (last_active_time == 0 || last_active_time > player.tickCount
+                    || last_active_time + blink_cooldown < player.tickCount) {
+                var forward = player.getForward();
+
+                var offsetX = forward.x * 3;
+                var offsetZ = forward.z * 3;
+
+                player.setDeltaMovement(offsetX, player.getDeltaMovement().y, offsetZ);
+                player.invulnerableTime = 20;
+                player.swing(event.getHand());
+
+                for (var victim : player.level.getEntities(player,
+                        player.getBoundingBox().move(offsetX, 0, offsetZ).inflate(3))) {
+                    float damageBouns;
+
+                    if (victim instanceof Mob mob) {
+                        damageBouns = EnchantmentHelper.getDamageBonus(player.getMainHandItem(), mob.getMobType());
+                    } else {
+                        damageBouns = EnchantmentHelper.getDamageBonus(player.getMainHandItem(), MobType.UNDEFINED);
+                    }
+
+                    damageBouns += (float) player.getAttributeValue(Attributes.ATTACK_DAMAGE);
+                    victim.invulnerableTime = 10;
+                    victim.hurt(DamageSource.playerAttack(player), damageBouns * 0.4F * blinkLevel);
+                }
+
+                tag.putInt("surrender_blink_last_active_time", player.tickCount);
+            }
+        }
+
         if (tag != null && tag.getBoolean("surrender_seeker_available")) {
             var x = tag.getDouble("surrender_seeker_x");
             var y = tag.getDouble("surrender_seeker_y");
@@ -55,11 +96,14 @@ public final class EnchantmentEventHandler {
                 return;
             }
 
+            var motion = entity.getDeltaMovement();
             entity.teleportTo(x, y, z);
+            entity.setDeltaMovement(motion);
             entity.swing(event.getHand());
             entity.playSound(SoundEvents.ENDERMAN_TELEPORT, 1, 1);
-            for (var victim : entity.level.getEntities(entity, entity.getBoundingBox().inflate(3))) {
+            for (var victim : entity.level.getEntities(entity, entity.getBoundingBox().inflate(5))) {
                 if (victim instanceof LivingEntity livingVictim) {
+                    victim.invulnerableTime = 10;
                     livingVictim.hurt(DamageSource.mobAttack(entity), 2.0F + livingVictim.getMaxHealth() * 0.12F);
                     livingVictim.setDeltaMovement((livingVictim.getX() - x) * 0.5, livingVictim.getDeltaMovement().y,
                             (livingVictim.getZ() - z) * 0.5);
@@ -75,9 +119,29 @@ public final class EnchantmentEventHandler {
 
     @SubscribeEvent
     public static final void onLivingHurt(final LivingHurtEvent event) {
+        var entity = event.getEntityLiving();
+        var sourceEntity = event.getSource().getEntity();
+
+        if (sourceEntity != null && sourceEntity instanceof LivingEntity source) {
+            var decisiveStrikeLevel = EnchantmentHelper.getEnchantmentLevel(SurrenderEnchantments.DECISIVE_STRIKE.get(),
+                    source);
+            if (decisiveStrikeLevel > 0 && entity.getHealth() < entity.getMaxHealth() * 0.4F) {
+                event.setAmount(event.getAmount() * (1.0F + decisiveStrikeLevel * 0.05F));
+            }
+
+            var lastStandLevel = EnchantmentHelper.getEnchantmentLevel(SurrenderEnchantments.LAST_STAND.get(), source);
+            if (lastStandLevel > 0 && source.getHealth() < source.getMaxHealth() * 0.4F) {
+                event.setAmount(event.getAmount() * (1.0F + lastStandLevel * 0.05F));
+            }
+
+            var ripperLevel = EnchantmentHelper.getEnchantmentLevel(SurrenderEnchantments.RIPPER.get(), source);
+            if (ripperLevel > 0) {
+                event.setAmount(event.getAmount() * (1.0F + ripperLevel * 0.2F));
+            }
+        }
+
         final int guardian_cooldown = 20 * 30;
 
-        var entity = event.getEntityLiving();
         if (entity.getHealth() - event.getAmount() <= entity.getMaxHealth() * 0.3) {
             for (var armor : event.getEntityLiving().getArmorSlots()) {
                 var level = EnchantmentHelper.getTagEnchantmentLevel(SurrenderEnchantments.GUARDIAN.get(), armor);
@@ -95,12 +159,11 @@ public final class EnchantmentEventHandler {
             }
         }
 
-        var sourceEntity = event.getSource().getEntity();
         if (sourceEntity != null && sourceEntity instanceof LivingEntity source) {
             var regeneratorLevel = EnchantmentHelper.getEnchantmentLevel(SurrenderEnchantments.REGENERATOR.get(),
                     source);
             if (regeneratorLevel > 0) {
-                var healAmount = +regeneratorLevel * 0.02F * (source.getMaxHealth() - source.getHealth());
+                var healAmount = regeneratorLevel * 0.02F * (source.getMaxHealth() - source.getHealth());
                 if (source.getHealth() <= source.getMaxHealth() * 0.25) {
                     healAmount *= 3;
                 } else if (source.getHealth() <= source.getMaxHealth() * 0.5) {
@@ -108,6 +171,22 @@ public final class EnchantmentEventHandler {
                 }
 
                 source.heal(healAmount);
+            }
+
+            var shieldRadierLevel = EnchantmentHelper.getEnchantmentLevel(SurrenderEnchantments.SHIELD_RAIDER.get(),
+                    source);
+            if (shieldRadierLevel > 0) {
+                var reductionAmount = 0.1F * shieldRadierLevel;
+                entity.setAbsorptionAmount(entity.getAbsorptionAmount() * reductionAmount);
+            }
+
+            if (source instanceof Player player) {
+                var predatorLevel = EnchantmentHelper.getEnchantmentLevel(SurrenderEnchantments.PREDATOR.get(), source);
+                if (predatorLevel > 0) {
+                    var foodData = player.getFoodData();
+                    foodData.setSaturation(foodData.getSaturationLevel() + predatorLevel);
+                    foodData.setFoodLevel(foodData.getFoodLevel() + predatorLevel);
+                }
             }
         }
     }
