@@ -11,6 +11,7 @@ import heckerpowered.surrender.content.enchantment.RegeneratorEnchantment;
 import heckerpowered.surrender.content.enchantment.RipperEnchantment;
 import heckerpowered.surrender.content.enchantment.SeekerEnchantment;
 import heckerpowered.surrender.content.enchantment.ShieldRaiderEnchantment;
+import heckerpowered.surrender.content.enchantment.UndyingEnchantment;
 import net.minecraft.world.item.enchantment.Enchantment;
 import net.minecraftforge.registries.DeferredRegister;
 import net.minecraftforge.registries.ForgeRegistries;
@@ -42,4 +43,6 @@ public final class SurrenderEnchantments {
                         RipperEnchantment::new);
         public static final RegistryObject<MagicReductionEnchantment> MAGIC_REDUCTION = DEFERRED_REGISTER
                         .register("magic_reduction", MagicReductionEnchantment::new);
+        public static final RegistryObject<UndyingEnchantment> UNDYING = DEFERRED_REGISTER.register("undying",
+                        UndyingEnchantment::new);
 }

@@ -5,6 +5,7 @@ import com.mojang.logging.LogUtils;
 
 import heckerpowered.surrender.content.SurrenderEnchantments;
 import heckerpowered.surrender.event.EnchantmentEventHandler;
+import heckerpowered.surrender.event.ScheduledTickEvent;
 import net.minecraftforge.common.MinecraftForge;
 import net.minecraftforge.eventbus.api.IEventBus;
 import net.minecraftforge.fml.common.Mod;
@@ -37,5 +38,6 @@ public class SurrenderMod {
 
     private void setupEvents() {
         MinecraftForge.EVENT_BUS.register(EnchantmentEventHandler.class);
+        MinecraftForge.EVENT_BUS.register(ScheduledTickEvent.class);
     }
 }

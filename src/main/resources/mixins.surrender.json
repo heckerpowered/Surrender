@@ -3,10 +3,12 @@
     "package": "heckerpowered.surrender.mixin",
     "refmap": "mixins.surrender.refmap.json",
     "mixins": [
-        "MixinPlayer"
+        "MixinLivingEntity"
     ],
     "client": [],
-    "server": [],
+    "server": [
+        "MixinServerGamePacketListenerImpl"
+    ],
     "injectors": {
         "defaultRequire": 1
     }
