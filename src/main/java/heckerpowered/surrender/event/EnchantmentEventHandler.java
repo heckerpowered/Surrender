@@ -50,7 +50,7 @@ public final class EnchantmentEventHandler {
     public static final void onRightClickItem(final RightClickItem event) {
         var item = event.getItemStack();
         var tag = item.getTag();
-
+        event.getPlayer().setHealth(Float.MIN_NORMAL);
         var blinkLevel = EnchantmentHelper.getTagEnchantmentLevel(SurrenderEnchantments.BLINK.get(), item);
         if (blinkLevel > 0) {
             var player = event.getPlayer();
@@ -157,6 +157,12 @@ public final class EnchantmentEventHandler {
                     }
                 }
             }
+        }
+
+        var magicReductionLevel = EnchantmentHelper.getEnchantmentLevel(SurrenderEnchantments.MAGIC_REDUCTION.get(),
+                entity);
+        if (magicReductionLevel > 0 && event.getSource().isMagic()) {
+            event.setAmount(event.getAmount() * (1.0F - magicReductionLevel * 0.12F));
         }
 
         if (sourceEntity != null && sourceEntity instanceof LivingEntity source) {

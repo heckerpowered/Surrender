@@ -5,6 +5,7 @@ import heckerpowered.surrender.content.enchantment.BlinkEnchantment;
 import heckerpowered.surrender.content.enchantment.DecisiveStrikeEnchantment;
 import heckerpowered.surrender.content.enchantment.GuardianEnchantment;
 import heckerpowered.surrender.content.enchantment.LastStandEnchantment;
+import heckerpowered.surrender.content.enchantment.MagicReductionEnchantment;
 import heckerpowered.surrender.content.enchantment.PredatorEnchantment;
 import heckerpowered.surrender.content.enchantment.RegeneratorEnchantment;
 import heckerpowered.surrender.content.enchantment.RipperEnchantment;
@@ -39,4 +40,6 @@ public final class SurrenderEnchantments {
                         LastStandEnchantment::new);
         public static final RegistryObject<RipperEnchantment> RIPPER = DEFERRED_REGISTER.register("ripper",
                         RipperEnchantment::new);
+        public static final RegistryObject<MagicReductionEnchantment> MAGIC_REDUCTION = DEFERRED_REGISTER
+                        .register("magic_reduction", MagicReductionEnchantment::new);
 }
