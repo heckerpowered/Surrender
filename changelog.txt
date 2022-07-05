@@ -1,6 +1,43 @@
 1.19.x Changelog
 41.0
 ====
+ - 41.0.63 Implement full support for IPv6 (#8742)
+ - 41.0.62 Fix certain user-configured options being overwritten incorrectly due to validators. (#8780)
+ - 41.0.61 Allow safely registering RenderType predicates at any time (#8685)
+ - 41.0.60 Fix crash after loading error due to fluid texture gathering and config lookup (#8802)
+ - 41.0.59 Remove the configuration option for handling empty tags in ingredients. (#8799)
+           Now empty tags are considered broken in all states.
+ - 41.0.58 Fix MC-105317 Structure blocks do not rotate entities correctly when loading (#8792)
+ - 41.0.57 Fire ChunkWatchEvents after sending packets (#8747)
+ - 41.0.56 Add item handler capability to chest boats (#8787)
+ - 41.0.55 Add getter for correct BiomeSpecialEffectsBuilder to BiomeInfo$Builder (#8781)
+ - 41.0.54 Fix BlockToolModificationEvent missing cancelable annotation (#8778)
+ - 41.0.53 Fix ticking chunk tickets from forge's chunk manager not causing chunks to fully tick (#8775)
+ - 41.0.52 Fix default audio device config loading string comparison issue (#8767)
+ - 41.0.51 Fix missed vanilla method overrides in ForgeRegistry (#8766)
+ - 41.0.50 Add MinecraftServer reference to ServerTickEvent (#8765)
+ - 41.0.49 Fix TagsProviders for datapack registries not recognizing existing files (#8761)
+ - 41.0.48 Add callback after a BlockState was changed and the neighbors were updated (#8686)
+ - 41.0.47 Add biome tag entries for 1.19 biomes (#8684)
+ - 41.0.46 Make fishing rods use tool actions for relevant logic (#8681)
+ - 41.0.45 Update BootstrapLauncher to 1.1.1 and remove the forced
+           merge of text2speech since new BSL does it.
+ - 41.0.44 Merge text2speech libs together so the natives are part of the jar
+ - 41.0.43 Make Forge ConfigValues implement Supplier. (#8776)
+ - 41.0.42 Fix merge derp in AbstractModProvider and logic derp in ModDiscoverer
+ - 41.0.41 Add "send to mods in order" method to ModList and use it (#8759)
+           * Add "send to mods in order" method to ModList and use it in RegistryEvents and DataGen..
+           * Also preserve order in runAll
+           * Do better comparator thanks @pupnewfster
+           * postEvent as well.
+ - 41.0.40 Update SJH to 2.0.2.. (#8774)
+           * Update SJH to 2.0.3..
+ - 41.0.39 Sanity check the version specified in the mod file (#8749)
+           * Sanity check the version specified in the mod file to
+           make sure it's compatible with JPMS standards for
+           version strings.
+           Closes #8748
+           Requires SPI 6
  - 41.0.38 Fix SP-Devtime world loading crash due to missing server configs (#8757)
  - 41.0.37 Remove ForgeWorldPreset and related code (#8756)
            Vanilla has a working replacement.

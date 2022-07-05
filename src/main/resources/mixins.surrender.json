@@ -1,14 +1,13 @@
 {
     "required": true,
-    "package": "heckerpowered.surrender.mixin",
+    "package": "heckerpowered.surrender.common.core.mixin",
     "refmap": "mixins.surrender.refmap.json",
     "mixins": [
+        "MixinItemStack",
         "MixinLivingEntity"
     ],
     "client": [],
-    "server": [
-        "MixinServerGamePacketListenerImpl"
-    ],
+    "server": [],
     "injectors": {
         "defaultRequire": 1
     }
