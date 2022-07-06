@@ -244,6 +244,7 @@ public final class EnchantmentEventHandler {
                         // so we need to synchronize it manually.
                         //
                         Util.synchornizeMovement(player);
+
                     }
                 }).end(() -> {
                     synchornizedData.set(DATA_BLINK_ACTIVE, false);
@@ -253,7 +254,7 @@ public final class EnchantmentEventHandler {
                     // and upon completion of the dash, deals damage to entities around the player based on the enchantment level.
                     //
                     for (var victim : player.level.getEntities(player,
-                            player.getBoundingBox().inflate(5))) {
+                            player.getBoundingBox().inflate(2))) {
                         float damageBouns;
 
                         //
