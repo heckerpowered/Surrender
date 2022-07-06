@@ -178,6 +178,11 @@ public final class EnchantmentEventHandler {
         // "Blink" enchantment can only activate if "Seeker" enchantment is not activated.
         // "Blink" cannot be re-activated while it is active.
         //
+        // "Blink" use bool to determine whether it is active, so when "Blink" is re-activated
+        // while it is active, the player won't be rendered correctly.
+        //
+        // If you want "Blink" to reactivate when it is activated, change the bool to a count.
+        //
         if (blinkLevel > 0 && !seek_activated && !synchornizedData.get(DATA_BLINK_ACTIVE)) {
             //
             // The higher value of the "Blink" enchantment, the lower cooldown time.
