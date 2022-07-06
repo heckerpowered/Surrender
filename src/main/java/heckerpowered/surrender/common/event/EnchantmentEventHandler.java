@@ -23,6 +23,7 @@ import net.minecraft.world.item.enchantment.EnchantmentHelper;
 import net.minecraft.world.level.Explosion;
 import net.minecraft.world.phys.Vec3;
 import net.minecraftforge.api.distmarker.Dist;
+import net.minecraftforge.event.ForgeEventFactory;
 import net.minecraftforge.event.entity.EntityJoinWorldEvent;
 import net.minecraftforge.event.entity.ProjectileImpactEvent;
 import net.minecraftforge.event.entity.EntityEvent.EntityConstructing;
@@ -84,6 +85,7 @@ public final class EnchantmentEventHandler {
         final var tag = item.getTag();
         final var player = event.getPlayer();
         final var synchornizedData = player.getEntityData();
+        final var interactionHand = event.getHand();
 
         if (player.getLevel().isClientSide()) {
             return;
@@ -194,13 +196,24 @@ public final class EnchantmentEventHandler {
             //
             final var last_active_time = tag.getInt("surrender_blink_last_active_time");
 
+            //
+            // No cooldown recorded, or the cooldown is over, so the "Blink" enchantment can be activated.
+            //
             if (last_active_time == 0 || last_active_time > player.tickCount
                     || last_active_time + blink_cooldown < player.tickCount) {
                 //
                 // Activating "Blink" enchantment requires at least 1 durability.
                 //
                 item.hurtAndBreak(1, player, v -> {
+                    //
+                    // Broadcast break event.
+                    //
+                    player.broadcastBreakEvent(interactionHand);
 
+                    //
+                    // Trigger forge events.
+                    //
+                    ForgeEventFactory.onPlayerDestroyItem(player, item, interactionHand);
                 });
 
                 //
@@ -217,7 +230,7 @@ public final class EnchantmentEventHandler {
                 synchornizedData.set(DATA_BLINK_ACTIVE, true);
 
                 //
-                //
+                // Make the player do uniform linear motion
                 //
                 ScheduledTickEvent.scheduled(new ScheduledTickTask(3, () -> {
                     if (player instanceof ServerPlayer serverPlayer) {
