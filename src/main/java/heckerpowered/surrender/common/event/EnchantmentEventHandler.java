@@ -48,6 +48,10 @@ public final class EnchantmentEventHandler {
             final var offHandItem = player.getOffhandItem();
             final var entity = event.getEntity();
 
+            if (entity.level.isClientSide) {
+                return;
+            }
+
             //
             // If both main hand item and off hand item have enchantment "Seeker",
             // "Seeker" enchantment only works on the main hand.
@@ -80,6 +84,10 @@ public final class EnchantmentEventHandler {
         final var tag = item.getTag();
         final var player = event.getPlayer();
         final var synchornizedData = player.getEntityData();
+
+        if (player.getLevel().isClientSide()) {
+            return;
+        }
 
         boolean seek_activated = false;
 
@@ -168,8 +176,9 @@ public final class EnchantmentEventHandler {
 
         //
         // "Blink" enchantment can only activate if "Seeker" enchantment is not activated.
+        // "Blink" cannot be re-activated while it is active.
         //
-        if (blinkLevel > 0 && !seek_activated) {
+        if (blinkLevel > 0 && !seek_activated && !synchornizedData.get(DATA_BLINK_ACTIVE)) {
             //
             // The higher value of the "Blink" enchantment, the lower cooldown time.
             //
@@ -255,7 +264,8 @@ public final class EnchantmentEventHandler {
                         // If the attack was blocked, or the attack cannot be applied,
                         // no durability is consumed.
                         //
-                        if (!victim.hurt(DamageSource.playerAttack(player), damageBouns * 0.4F * blinkLevel)) {
+                        if (victim.isAttackable()
+                                && !victim.hurt(DamageSource.playerAttack(player), damageBouns * 0.4F * blinkLevel)) {
                             //
                             // Each hit on target costs one durability, and all entities will take damage regradless
                             // of whether weapon has been destroyed.
@@ -311,6 +321,10 @@ public final class EnchantmentEventHandler {
     @SubscribeEvent
     public static final void onLivingHurt(final LivingHurtEvent event) {
         final var entity = event.getEntityLiving();
+
+        if (entity.level.isClientSide) {
+            return;
+        }
 
         //
         // May be null.
@@ -467,6 +481,10 @@ public final class EnchantmentEventHandler {
         final var sourceEntiity = event.getSource().getEntity();
         final var data = entity.getPersistentData();
 
+        if (entity.level.isClientSide) {
+            return;
+        }
+
         if (!data.getBoolean("surrender_undying")) {
             final var undyingLevel = EnchantmentHelper.getEnchantmentLevel(SurrenderEnchantments.UNDYING.get(), entity);
             if (undyingLevel > 0) {
@@ -544,22 +562,31 @@ public final class EnchantmentEventHandler {
     @SubscribeEvent
     public static void onLivingAttack(final LivingAttackEvent event) {
         final var entity = event.getEntityLiving();
-        final var data = entity.getPersistentData();
+        final var synchornizedData = entity.getEntityData();
+
+        if (entity.level.isClientSide) {
+            return;
+        }
 
         //
         // Avoiding taking damage while blinking.
         //
-        if (data.getBoolean("surrender_blink_active")) {
+        if (entity instanceof Player && synchornizedData.get(DATA_BLINK_ACTIVE)) {
             event.setCanceled(true);
         }
     }
 
     @SubscribeEvent
     public static void onEntityJoinWorld(final EntityJoinWorldEvent event) {
+        final var entity = event.getEntity();
+        if (entity.level.isClientSide) {
+            return;
+        }
+
         //
         // Determine if the entity is a projectile.
         //
-        if (event.getEntity() instanceof Projectile projectile) {
+        if (entity instanceof Projectile projectile) {
             final var owner = projectile.getOwner();
 
             //
@@ -583,6 +610,10 @@ public final class EnchantmentEventHandler {
     public static void onProjectileImpact(final ProjectileImpactEvent event) {
         final var projectile = event.getProjectile();
         final var data = projectile.getPersistentData();
+
+        if (projectile.level.isClientSide) {
+            return;
+        }
 
         final var explosionLevel = data.getInt("surrender_explosion_level");
         if (explosionLevel > 0) {
