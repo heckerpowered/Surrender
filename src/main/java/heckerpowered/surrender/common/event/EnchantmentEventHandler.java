@@ -780,8 +780,8 @@ public final class EnchantmentEventHandler {
             //
             // Determine whether the damage source can be reused.
             //
-            if (persistentData.getBoolean("surrender_undying") && source instanceof BadRespawnPointDamage
-                    || source instanceof EntityDamageSource) {
+            if (persistentData.getBoolean("surrender_undying") && (source instanceof BadRespawnPointDamage
+                    || source instanceof EntityDamageSource)) {
                 source.bypassArmor().bypassEnchantments().bypassInvul().bypassMagic();
             }
         }
