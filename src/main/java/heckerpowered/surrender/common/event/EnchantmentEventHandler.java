@@ -10,7 +10,9 @@ import net.minecraft.network.syncher.SynchedEntityData;
 import net.minecraft.server.level.ServerPlayer;
 import net.minecraft.sounds.SoundEvents;
 import net.minecraft.world.InteractionHand;
+import net.minecraft.world.damagesource.BadRespawnPointDamage;
 import net.minecraft.world.damagesource.DamageSource;
+import net.minecraft.world.damagesource.EntityDamageSource;
 import net.minecraft.world.effect.MobEffectInstance;
 import net.minecraft.world.effect.MobEffects;
 import net.minecraft.world.entity.LivingEntity;
@@ -356,6 +358,23 @@ public final class EnchantmentEventHandler {
         // and cast it.
         //
         if (sourceEntity != null && sourceEntity instanceof LivingEntity source) {
+            //
+            // Gets entity's persistent data.
+            //
+            final var persistentData = sourceEntity.getPersistentData();
+
+            final var undyingLevel = EnchantmentHelper.getEnchantmentLevel(SurrenderEnchantments.UNDYING.get(), source);
+
+            //
+            // Determine whether "Undying" is activating.
+            //
+            if (undyingLevel > 0 && persistentData.getBoolean("surrender_undying")) {
+                //
+                // Increase damage.
+                //
+                event.setAmount(entity.getMaxHealth() * (1.1F + 0.02F * undyingLevel));
+            }
+
             final var decisiveStrikeLevel = EnchantmentHelper.getEnchantmentLevel(
                     SurrenderEnchantments.DECISIVE_STRIKE.get(),
                     source);
@@ -492,6 +511,11 @@ public final class EnchantmentEventHandler {
                 }
             }
         }
+
+        final var persisdentData = entity.getPersistentData();
+        if (persisdentData.getBoolean("surrender_undying")) {
+            event.setAmount(event.getAmount() * 0.1F);
+        }
     }
 
     @SubscribeEvent
@@ -504,6 +528,9 @@ public final class EnchantmentEventHandler {
             return;
         }
 
+        //
+        // Determine whether undying is activating.
+        //
         if (!data.getBoolean("surrender_undying")) {
             final var undyingLevel = EnchantmentHelper.getEnchantmentLevel(SurrenderEnchantments.UNDYING.get(), entity);
             if (undyingLevel > 0) {
@@ -518,7 +545,7 @@ public final class EnchantmentEventHandler {
                 entity.setHealth(entity.getMaxHealth());
 
                 //
-                // Mark "Undying" enchantment is activing so that it won't prevent entity from dying again.
+                // Mark "Undying" enchantment is activating so that it won't prevent entity from dying again.
                 //
                 data.putBoolean("surrender_undying", true);
 
@@ -547,7 +574,7 @@ public final class EnchantmentEventHandler {
                     }
 
                     //
-                    // Mark "Undying" enchantment is not activing so that it can be activated again.
+                    // Mark "Undying" enchantment is not activating so that it can be activated again.
                     //
                     data.putBoolean("surrender_undying", false);
 
@@ -582,7 +609,7 @@ public final class EnchantmentEventHandler {
     public static void onLivingAttack(final LivingAttackEvent event) {
         final var entity = event.getEntityLiving();
         final var synchornizedData = entity.getEntityData();
-
+        final var source = event.getSource();
         if (entity.level.isClientSide) {
             return;
         }
@@ -592,6 +619,19 @@ public final class EnchantmentEventHandler {
         //
         if (entity instanceof Player && synchornizedData.get(DATA_BLINK_ACTIVE)) {
             event.setCanceled(true);
+        }
+
+        if (source.getEntity() != null) {
+            final var sourceEntity = source.getEntity();
+            final var persistentData = sourceEntity.getPersistentData();
+
+            //
+            // Determine whether the damage source can be reused.
+            //
+            if (persistentData.getBoolean("surrender_undying") && source instanceof BadRespawnPointDamage
+                    || source instanceof EntityDamageSource) {
+                source.bypassArmor().bypassEnchantments().bypassInvul().bypassMagic();
+            }
         }
     }
 
