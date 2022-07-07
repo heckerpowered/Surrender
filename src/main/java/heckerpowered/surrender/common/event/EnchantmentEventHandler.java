@@ -516,7 +516,7 @@ public final class EnchantmentEventHandler {
                 //
                 // Increase damage.
                 //
-                event.setAmount(entity.getMaxHealth() * (1.1F + 0.02F * undyingLevel));
+                event.setAmount(event.getAmount() + entity.getMaxHealth() * (0.1F + 0.02F * undyingLevel));
             }
 
             final var decisiveStrikeLevel = EnchantmentHelper.getEnchantmentLevel(
