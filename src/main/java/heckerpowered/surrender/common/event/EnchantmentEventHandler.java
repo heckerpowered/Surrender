@@ -380,7 +380,8 @@ public final class EnchantmentEventHandler {
 
                         Util.synchornizeMovement(player);
                     }
-                    for (var victim : player.level.getEntities(player, player.getBoundingBox().inflate(1.3D + (blisteringLevel / 10)))) {
+                    for (var victim : player.level.getEntities(player,
+                            player.getBoundingBox().inflate(1.3D + (blisteringLevel / 10)))) {
                         float damageBouns;
 
                         if (victim instanceof Mob mob) {
@@ -415,7 +416,7 @@ public final class EnchantmentEventHandler {
 
                     tag.putInt("surrender_blistering_last_active_time", player.tickCount);
                 } else {
-                    
+
                     player.getPersistentData().putBoolean("blisteringAttack", false);
                 }
             }
