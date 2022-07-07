@@ -89,6 +89,7 @@ public final class EnchantmentEventHandler {
         final var tag = item.getTag();
         final var player = event.getPlayer();
         final var synchornizedData = player.getEntityData();
+        final var playerPersistentData = player.getPersistentData();
         final var interactionHand = event.getHand();
 
         if (player.getLevel().isClientSide()) {
@@ -148,7 +149,7 @@ public final class EnchantmentEventHandler {
                 //
                 for (var victim : player.level.getEntities(player, player.getBoundingBox().inflate(5))) {
                     if (victim instanceof LivingEntity livingVictim) {
-                        livingVictim.hurt(DamageSource.mobAttack(player),
+                        livingVictim.hurt(DamageSource.playerAttack(player),
                                 2.0F + livingVictim.getMaxHealth() * 0.12F * seekerLevel);
 
                         //
@@ -308,6 +309,15 @@ public final class EnchantmentEventHandler {
                             // of whether weapon has been destroyed.
                             //
                             item.hurtAndBreak(1, player, v -> {
+                                //
+                                // Broadcast break event.
+                                //
+                                player.broadcastBreakEvent(interactionHand);
+
+                                //
+                                // Trigger forge events.
+                                //
+                                ForgeEventFactory.onPlayerDestroyItem(player, item, interactionHand);
                             });
                         }
 
@@ -358,24 +368,35 @@ public final class EnchantmentEventHandler {
         final var blisteringLevel = EnchantmentHelper.getTagEnchantmentLevel(SurrenderEnchantments.BLISTERING.get(),
                 item);
 
-        if (blisteringLevel > 0 && !synchornizedData.get(DATA_BLISTERING)) {
+        if (blisteringLevel > 0 && !tag.getBoolean("surrender_blistering_active")) {
 
+            //
+            // The higher value of the "Blistering" enchantment, the lower cooldown time.
+            //
             final int blistering_cooldown = 40 * (9 - blisteringLevel);
 
+            //
+            // Gets the last time the "Blistering" enchantment was activated in order to
+            // determine if the "Blistering" enchantment can be activated.
+            //
             final int last_active_time = tag.getInt("surrender_blistering_last_active_time");
 
             if (last_active_time == 0 || last_active_time > player.tickCount
                     || last_active_time + blistering_cooldown < player.tickCount) {
 
-                final var damageSource = DamageSource.playerAttack(player);
-
                 final var forward = Vec3.directionFromRotation(0, player.getRotationVector().y);
 
-                synchornizedData.set(DATA_BLISTERING, true);
+                //
+                // Mark "Blistering" enchantment as activated, so that any damage won't taken by
+                // player.
+                //
+                playerPersistentData.putBoolean("surrender_blistering_active", true);
 
+                //
+                // Make the player do uniform linear motion
+                //
                 ScheduledTickEvent.scheduled(new ScheduledTickTask(3, () -> {
                     if (player instanceof ServerPlayer serverPlayer) {
-
                         player.setDeltaMovement(forward.x * 3, player.getDeltaMovement().y, forward.z * 3);
 
                         Util.synchornizeMovement(player);
@@ -384,19 +405,52 @@ public final class EnchantmentEventHandler {
                             player.getBoundingBox().inflate(1.3D + (blisteringLevel / 10)))) {
                         float damageBouns;
 
+                        //
+                        // Different mob types may have impact on the extra damage added by the
+                        // enchantments the item has,
+                        // so we need to determine the type of mob.
+                        //
                         if (victim instanceof Mob mob) {
+                            //
+                            // The victim is a mob.
+                            //
                             damageBouns = EnchantmentHelper.getDamageBonus(player.getMainHandItem(), mob.getMobType());
                         } else {
+                            //
+                            // The victim isn't a mob.
+                            //
                             damageBouns = EnchantmentHelper.getDamageBonus(player.getMainHandItem(), MobType.UNDEFINED);
                         }
 
+                        //
+                        // Caculate player's base damage (will be affected by potion effects)
+                        //
                         damageBouns += (float) player.getAttributeValue(Attributes.ATTACK_DAMAGE);
 
-                        if (victim.isAttackable() && !victim.hurt(damageSource, damageBouns * 0.4F * blisteringLevel)) {
-                            item.hurtAndBreak(1, player, EnchantmentEventHandler::blistering);
-                        }
+                        //
+                        // Deal damage (40% AD * Enchant level).
+                        // If the attack was blocked, or the attack cannot be applied,
+                        // no durability is consumed.
+                        //
+                        if (victim.isAttackable() && !victim.hurt(
+                                DamageSource.playerAttack(player), damageBouns * 0.4F * blisteringLevel)) {
+                            //
+                            // Each hit on target costs one durability, and all entities will take damage
+                            // regradless
+                            // of whether weapon has been destroyed.
+                            //
+                            item.hurtAndBreak(1, player, v -> {
+                                //
+                                // Broadcast break event.
+                                //
+                                player.broadcastBreakEvent(interactionHand);
 
-                        if (victim instanceof LivingEntity) {
+                                //
+                                // Trigger forge events.
+                                //
+                                ForgeEventFactory.onPlayerDestroyItem(player, item, interactionHand);
+                            });
+
                             tag.putInt("surrender_blistering_last_active_time", 0);
                         }
 
@@ -406,19 +460,24 @@ public final class EnchantmentEventHandler {
                 }).end(() -> {
                     synchornizedData.set(DATA_BLISTERING, false);
 
+                    //
+                    // Visual effects.
+                    //
                     player.swing(event.getHand());
 
+                    //
+                    // Make player stop dashing instantly.
+                    //
                     player.setDeltaMovement(0, player.getDeltaMovement().y, 0);
 
+                    //
+                    // The server does not automatically synchronize the player's motion,
+                    // so we need to synchronize it manually.
+                    //
                     Util.synchornizeMovement(player);
                 }));
-                if (!player.getPersistentData().getBoolean("blisteringAttack")) {
 
-                    tag.putInt("surrender_blistering_last_active_time", player.tickCount);
-                } else {
-
-                    player.getPersistentData().putBoolean("blisteringAttack", false);
-                }
+                tag.putInt("surrender_blistering_last_active_time", player.tickCount);
             }
         }
     }
@@ -785,12 +844,5 @@ public final class EnchantmentEventHandler {
             entity.getEntityData().define(DATA_BLINK_ACTIVE, false);
             entity.getEntityData().define(DATA_BLISTERING, false);
         }
-    }
-
-    private static final void blistering(Player player) {
-        if (player == null || player.level.isClientSide) {
-            return;
-        }
-        player.getPersistentData().putBoolean("blisteringAttack", true);
     }
 }
