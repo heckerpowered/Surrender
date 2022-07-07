@@ -39,6 +39,8 @@ public final class EnchantmentEventHandler {
 
     public static final EntityDataAccessor<Boolean> DATA_BLINK_ACTIVE = SynchedEntityData.defineId(
             Player.class, EntityDataSerializers.BOOLEAN);
+    public static final EntityDataAccessor<Boolean> DATA_BLISTERING = SynchedEntityData.defineId(Player.class,
+            EntityDataSerializers.BOOLEAN);
 
     @SubscribeEvent
     public static final void onLivingDead(final LivingDeathEvent event) {
@@ -101,12 +103,14 @@ public final class EnchantmentEventHandler {
             final var seekerLevel = tag.getInt("surrender_seeker_level");
 
             //
-            // "Seeker" enchantment can only teleport while player is inside 20m of the target.
+            // "Seeker" enchantment can only teleport while player is inside 20m of the
+            // target.
             //
             if (player.distanceToSqr(x, y, z) < 400.0D) {
 
                 //
-                // Teleport will set player's motion to zero, so we need to set it back to the original value after teleporting.
+                // Teleport will set player's motion to zero, so we need to set it back to the
+                // original value after teleporting.
                 //
                 final var movement = player.getDeltaMovement();
 
@@ -166,7 +170,8 @@ public final class EnchantmentEventHandler {
                 tag.remove("surrender_seeker_available");
 
                 //
-                // Mark the "Seeker" enchantment activated, so that the "Blink" enchantment won't active.
+                // Mark the "Seeker" enchantment activated, so that the "Blink" enchantment
+                // won't active.
                 //
                 seek_activated = true;
             }
@@ -175,13 +180,16 @@ public final class EnchantmentEventHandler {
         final var blinkLevel = EnchantmentHelper.getTagEnchantmentLevel(SurrenderEnchantments.BLINK.get(), item);
 
         //
-        // "Blink" enchantment can only activate if "Seeker" enchantment is not activated.
+        // "Blink" enchantment can only activate if "Seeker" enchantment is not
+        // activated.
         // "Blink" cannot be re-activated while it is active.
         //
-        // "Blink" use bool to determine whether it is active, so when "Blink" is re-activated
+        // "Blink" use bool to determine whether it is active, so when "Blink" is
+        // re-activated
         // while it is active, the player won't be rendered correctly.
         //
-        // If you want "Blink" to reactivate when it is activated, change the bool to a count.
+        // If you want "Blink" to reactivate when it is activated, change the bool to a
+        // count.
         //
         if (blinkLevel > 0 && !seek_activated && !synchornizedData.get(DATA_BLINK_ACTIVE)) {
             //
@@ -190,7 +198,8 @@ public final class EnchantmentEventHandler {
             final int blink_cooldown = 20 * (6 - blinkLevel);
 
             //
-            // Gets the last time the "Blink" enchantment was activated in order to determine if the "Blink" enchantment can be activated.
+            // Gets the last time the "Blink" enchantment was activated in order to
+            // determine if the "Blink" enchantment can be activated.
             //
             final var last_active_time = tag.getInt("surrender_blink_last_active_time");
 
@@ -204,14 +213,17 @@ public final class EnchantmentEventHandler {
                 });
 
                 //
-                // Gets the player's direction and ignore the influence of the Pitch axis on the x- and y-axis distances.
+                // Gets the player's direction and ignore the influence of the Pitch axis on the
+                // x- and y-axis distances.
                 //
                 final var forward = Vec3.directionFromRotation(0, player.getRotationVector().y);
 
                 //
-                // Mark "Blink" enchantment as activated, so that any damage won't taken by player.
+                // Mark "Blink" enchantment as activated, so that any damage won't taken by
+                // player.
                 //
-                // SyncedEntityData is used instead of NBT in order to synchronize data with the client
+                // SyncedEntityData is used instead of NBT in order to synchronize data with the
+                // client
                 // so that invisible units can be rendered correctly.
                 //
                 synchornizedData.set(DATA_BLINK_ACTIVE, true);
@@ -236,15 +248,18 @@ public final class EnchantmentEventHandler {
                     synchornizedData.set(DATA_BLINK_ACTIVE, false);
 
                     //
-                    // The "Blink" enchantment causes the player to dash in the direction of the player's direction for a distance,
-                    // and upon completion of the dash, deals damage to entities around the player based on the enchantment level.
+                    // The "Blink" enchantment causes the player to dash in the direction of the
+                    // player's direction for a distance,
+                    // and upon completion of the dash, deals damage to entities around the player
+                    // based on the enchantment level.
                     //
                     for (var victim : player.level.getEntities(player,
                             player.getBoundingBox().inflate(5))) {
                         float damageBouns;
 
                         //
-                        // Different mob types may have impact on the extra damage added by the enchantments the item has,
+                        // Different mob types may have impact on the extra damage added by the
+                        // enchantments the item has,
                         // so we need to determine the type of mob.
                         //
                         if (victim instanceof Mob mob) {
@@ -272,7 +287,8 @@ public final class EnchantmentEventHandler {
                         if (victim.isAttackable()
                                 && !victim.hurt(DamageSource.playerAttack(player), damageBouns * 0.4F * blinkLevel)) {
                             //
-                            // Each hit on target costs one durability, and all entities will take damage regradless
+                            // Each hit on target costs one durability, and all entities will take damage
+                            // regradless
                             // of whether weapon has been destroyed.
                             //
                             item.hurtAndBreak(1, player, v -> {
@@ -316,9 +332,76 @@ public final class EnchantmentEventHandler {
                 }));
 
                 //
-                // Sets the last time the "Blink" enchantment was activated, which is used to caculate cooldown.
+                // Sets the last time the "Blink" enchantment was activated, which is used to
+                // caculate cooldown.
                 //
                 tag.putInt("surrender_blink_last_active_time", player.tickCount);
+            }
+        }
+
+        final var blisteringLevel = EnchantmentHelper.getTagEnchantmentLevel(SurrenderEnchantments.BLISTERING.get(),
+                item);
+
+        if (blisteringLevel > 0 && !synchornizedData.get(DATA_BLISTERING)) {
+
+            final int blistering_cooldown = 40 * (9 - blisteringLevel);
+
+            final int last_active_time = tag.getInt("surrender_blistering_last_active_time");
+
+            if (last_active_time == 0 || last_active_time > player.tickCount
+                    || last_active_time + blistering_cooldown < player.tickCount) {
+
+                final var damageSource = DamageSource.playerAttack(player);
+
+                final var forward = Vec3.directionFromRotation(0, player.getRotationVector().y);
+
+                synchornizedData.set(DATA_BLISTERING, true);
+
+                ScheduledTickEvent.scheduled(new ScheduledTickTask(3, () -> {
+                    if (player instanceof ServerPlayer serverPlayer) {
+
+                        player.setDeltaMovement(forward.x * 3, player.getDeltaMovement().y, forward.z * 3);
+
+                        Util.synchornizeMovement(player);
+                    }
+                    for (var victim : player.level.getEntities(player, player.getBoundingBox().inflate(1.3D + (blisteringLevel / 10)))) {
+                        float damageBouns;
+
+                        if (victim instanceof Mob mob) {
+                            damageBouns = EnchantmentHelper.getDamageBonus(player.getMainHandItem(), mob.getMobType());
+                        } else {
+                            damageBouns = EnchantmentHelper.getDamageBonus(player.getMainHandItem(), MobType.UNDEFINED);
+                        }
+
+                        damageBouns += (float) player.getAttributeValue(Attributes.ATTACK_DAMAGE);
+
+                        if (victim.isAttackable() && !victim.hurt(damageSource, damageBouns * 0.4F * blisteringLevel)) {
+                            item.hurtAndBreak(1, player, EnchantmentEventHandler::blistering);
+                        }
+
+                        if (victim instanceof LivingEntity) {
+                            tag.putInt("surrender_blistering_last_active_time", 0);
+                        }
+
+                        DistExecutor.safeRunWhenOn(Dist.CLIENT, () -> ClientMethod::playSweepSound);
+
+                    }
+                }).end(() -> {
+                    synchornizedData.set(DATA_BLISTERING, false);
+
+                    player.swing(event.getHand());
+
+                    player.setDeltaMovement(0, player.getDeltaMovement().y, 0);
+
+                    Util.synchornizeMovement(player);
+                }));
+                if (!player.getPersistentData().getBoolean("blisteringAttack")) {
+
+                    tag.putInt("surrender_blistering_last_active_time", player.tickCount);
+                } else {
+                    
+                    player.getPersistentData().putBoolean("blisteringAttack", false);
+                }
             }
         }
     }
@@ -338,7 +421,8 @@ public final class EnchantmentEventHandler {
 
         //
         // Source entity may be null, and only LivingEntity may have enchantments.
-        // so we need to check it, and detemine whether the source entity is a LivingEntity,
+        // so we need to check it, and detemine whether the source entity is a
+        // LivingEntity,
         // and cast it.
         //
         if (sourceEntity != null && sourceEntity instanceof LivingEntity source) {
@@ -347,7 +431,8 @@ public final class EnchantmentEventHandler {
                     source);
 
             //
-            // "Decisive Strike" enchantment can only activate if the source entity's health is below 40%.
+            // "Decisive Strike" enchantment can only activate if the source entity's health
+            // is below 40%.
             //
             if (decisiveStrikeLevel > 0 && entity.getHealth() < entity.getMaxHealth() * 0.4F) {
                 event.setAmount(event.getAmount() * (1.0F + decisiveStrikeLevel * 0.05F));
@@ -357,7 +442,8 @@ public final class EnchantmentEventHandler {
                     source);
 
             //
-            // "Last Stand" enchantment can only activate if the attacker's health is below 40%.
+            // "Last Stand" enchantment can only activate if the attacker's health is below
+            // 40%.
             //
             if (lastStandLevel > 0 && source.getHealth() < source.getMaxHealth() * 0.4F) {
                 event.setAmount(event.getAmount() * (1.0F + lastStandLevel * 0.05F));
@@ -386,7 +472,8 @@ public final class EnchantmentEventHandler {
         final int guardian_cooldown = 20 * 30;
 
         //
-        // "Guardian" enchantment actives when taking damage that can cause you to drop below 30% of your health.
+        // "Guardian" enchantment actives when taking damage that can cause you to drop
+        // below 30% of your health.
         //
         if (entity.getHealth() - event.getAmount() <= entity.getMaxHealth() * 0.3F) {
             //
@@ -421,7 +508,8 @@ public final class EnchantmentEventHandler {
                 entity);
 
         //
-        // Determine whether damage is magic because the "Magic Reduction" enchantment is only effective on magic damage.
+        // Determine whether damage is magic because the "Magic Reduction" enchantment
+        // is only effective on magic damage.
         //
         if (magicReductionLevel > 0 && event.getSource().isMagic()) {
             //
@@ -504,12 +592,14 @@ public final class EnchantmentEventHandler {
                 entity.setHealth(entity.getMaxHealth());
 
                 //
-                // Mark "Undying" enchantment is activing so that it won't prevent entity from dying again.
+                // Mark "Undying" enchantment is activing so that it won't prevent entity from
+                // dying again.
                 //
                 data.putBoolean("surrender_undying", true);
 
                 //
-                // Continuous deduction of 100% of the entity's health for a period of time based on the level of enchantment.
+                // Continuous deduction of 100% of the entity's health for a period of time
+                // based on the level of enchantment.
                 //
                 var ticks = 20 * 3 - (5 - undyingLevel) * 10;
                 ScheduledTickEvent.scheduled(new ScheduledTickTask(ticks, () -> {
@@ -538,7 +628,8 @@ public final class EnchantmentEventHandler {
                     data.putBoolean("surrender_undying", false);
 
                     //
-                    // Terminates tick task when entity is dead, so that the player will be re-spawned without dyinng again.
+                    // Terminates tick task when entity is dead, so that the player will be
+                    // re-spawned without dyinng again.
                     //
                 }).terminate(() -> entity.getHealth() <= 0.0F));
             }
@@ -576,7 +667,8 @@ public final class EnchantmentEventHandler {
         //
         // Avoiding taking damage while blinking.
         //
-        if (entity instanceof Player && synchornizedData.get(DATA_BLINK_ACTIVE)) {
+        if (entity instanceof Player
+                && (synchornizedData.get(DATA_BLINK_ACTIVE) || synchornizedData.get(DATA_BLISTERING))) {
             event.setCanceled(true);
         }
     }
@@ -595,7 +687,8 @@ public final class EnchantmentEventHandler {
             final var owner = projectile.getOwner();
 
             //
-            // Determine if the projectile's owner is a living entity in order to determine "Explosion" enchantment level.
+            // Determine if the projectile's owner is a living entity in order to determine
+            // "Explosion" enchantment level.
             //
             if (owner instanceof LivingEntity living) {
                 final var explosionLevel = EnchantmentHelper.getEnchantmentLevel(SurrenderEnchantments.EXPLOSION.get(),
@@ -635,6 +728,14 @@ public final class EnchantmentEventHandler {
         final var entity = event.getEntity();
         if (entity instanceof Player) {
             entity.getEntityData().define(DATA_BLINK_ACTIVE, false);
+            entity.getEntityData().define(DATA_BLISTERING, false);
         }
+    }
+
+    private static final void blistering(Player player) {
+        if (player == null || player.level.isClientSide) {
+            return;
+        }
+        player.getPersistentData().putBoolean("blisteringAttack", true);
     }
 }

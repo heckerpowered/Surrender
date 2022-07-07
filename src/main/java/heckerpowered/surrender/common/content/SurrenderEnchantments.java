@@ -2,6 +2,7 @@ package heckerpowered.surrender.common.content;
 
 import heckerpowered.surrender.common.SurrenderMod;
 import heckerpowered.surrender.common.content.enchantment.BlinkEnchantment;
+import heckerpowered.surrender.common.content.enchantment.BlisteringEnchantment;
 import heckerpowered.surrender.common.content.enchantment.DecisiveStrikeEnchantment;
 import heckerpowered.surrender.common.content.enchantment.ExperienceEnchantment;
 import heckerpowered.surrender.common.content.enchantment.ExplosionEnchantment;
@@ -57,4 +58,6 @@ public final class SurrenderEnchantments {
                         HasteEnchantment::new);
         public static final RegistryObject<FastBowEnchantment> FAST_BOW = DEFERRED_REGISTER.register("fast_bow",
                         FastBowEnchantment::new);
+        public static final RegistryObject<BlisteringEnchantment> BLISTERING = DEFERRED_REGISTER.register("blistering",
+                        BlisteringEnchantment::new);
 }
