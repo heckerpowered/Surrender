@@ -7,6 +7,10 @@ import net.minecraft.world.entity.Entity;
 import net.minecraft.world.level.Level;
 import net.minecraft.world.phys.Vec3;
 
+/**
+ * Represents a location in the supplied world.
+ * @author Heckerpowered
+ */
 @Immutable
 public class Location extends Vec3 {
 

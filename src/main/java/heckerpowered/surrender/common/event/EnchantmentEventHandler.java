@@ -2,7 +2,7 @@ package heckerpowered.surrender.common.event;
 
 import heckerpowered.surrender.client.ClientMethod;
 import heckerpowered.surrender.common.content.SurrenderEnchantments;
-import heckerpowered.surrender.common.core.util.Util;
+import heckerpowered.surrender.common.core.util.SurrenderUtil;
 import heckerpowered.surrender.common.core.util.scheduled.ScheduledTickTask;
 import net.minecraft.network.syncher.EntityDataAccessor;
 import net.minecraft.network.syncher.EntityDataSerializers;
@@ -35,7 +35,9 @@ import net.minecraftforge.event.entity.living.LivingHurtEvent;
 import net.minecraftforge.event.entity.player.PlayerInteractEvent.RightClickItem;
 import net.minecraftforge.eventbus.api.SubscribeEvent;
 import net.minecraftforge.fml.DistExecutor;
+import net.minecraftforge.fml.common.Mod;
 
+@Mod.EventBusSubscriber
 public final class EnchantmentEventHandler {
     private EnchantmentEventHandler() {
     }
@@ -132,7 +134,7 @@ public final class EnchantmentEventHandler {
                 //
                 // Synchornize player's motion.
                 //
-                Util.synchornizeMovement(player);
+                SurrenderUtil.synchornizeMovement(player);
 
                 //
                 // Visual effects
@@ -162,7 +164,7 @@ public final class EnchantmentEventHandler {
                         //
                         // Synchornize victim's motion if the victim is a player.
                         //
-                        Util.synchornizeMovement(livingVictim);
+                        SurrenderUtil.synchornizeMovement(livingVictim);
                     }
                 }
 
@@ -258,7 +260,7 @@ public final class EnchantmentEventHandler {
                         // The server does not automatically synchronize the player's motion,
                         // so we need to synchronize it manually.
                         //
-                        Util.synchornizeMovement(player);
+                        SurrenderUtil.synchornizeMovement(player);
 
                     }
                 }).end(() -> {
@@ -354,7 +356,7 @@ public final class EnchantmentEventHandler {
                     // The server does not automatically synchronize the player's motion,
                     // so we need to synchronize it manually.
                     //
-                    Util.synchornizeMovement(player);
+                    SurrenderUtil.synchornizeMovement(player);
                 }));
 
                 //
@@ -399,7 +401,7 @@ public final class EnchantmentEventHandler {
                     if (player instanceof ServerPlayer serverPlayer) {
                         player.setDeltaMovement(forward.x * 3, player.getDeltaMovement().y, forward.z * 3);
 
-                        Util.synchornizeMovement(player);
+                        SurrenderUtil.synchornizeMovement(player);
                     }
                     for (var victim : player.level.getEntities(player,
                             player.getBoundingBox().inflate(1.3D + (blisteringLevel / 10)))) {
@@ -474,7 +476,7 @@ public final class EnchantmentEventHandler {
                     // The server does not automatically synchronize the player's motion,
                     // so we need to synchronize it manually.
                     //
-                    Util.synchornizeMovement(player);
+                    SurrenderUtil.synchornizeMovement(player);
                 }));
 
                 tag.putInt("surrender_blistering_last_active_time", player.tickCount);

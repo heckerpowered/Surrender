@@ -2,16 +2,13 @@ package heckerpowered.surrender.client.event;
 
 import heckerpowered.surrender.common.event.EnchantmentEventHandler;
 import net.minecraftforge.client.event.RenderPlayerEvent;
-import net.minecraftforge.common.MinecraftForge;
 import net.minecraftforge.eventbus.api.SubscribeEvent;
+import net.minecraftforge.fml.common.Mod;
 
+@Mod.EventBusSubscriber
 public class ClientEventHandler {
     private ClientEventHandler() {
 
-    }
-
-    public static final void initialize() {
-        MinecraftForge.EVENT_BUS.register(ClientEventHandler.class);
     }
 
     @SubscribeEvent

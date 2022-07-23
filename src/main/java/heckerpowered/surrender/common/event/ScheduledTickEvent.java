@@ -6,7 +6,9 @@ import heckerpowered.surrender.common.core.util.scheduled.ScheduledTickTask;
 import net.minecraftforge.event.TickEvent.Phase;
 import net.minecraftforge.event.TickEvent.ServerTickEvent;
 import net.minecraftforge.eventbus.api.SubscribeEvent;
+import net.minecraftforge.fml.common.Mod;
 
+@Mod.EventBusSubscriber
 public final class ScheduledTickEvent {
     private static final ConcurrentLinkedDeque<ScheduledTickTask> tasks = new ConcurrentLinkedDeque<ScheduledTickTask>();
 

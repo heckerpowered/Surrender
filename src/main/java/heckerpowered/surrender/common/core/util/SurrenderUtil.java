@@ -6,8 +6,12 @@ import net.minecraft.network.protocol.game.ClientboundSetEntityMotionPacket;
 import net.minecraft.server.level.ServerPlayer;
 import net.minecraft.world.entity.Entity;
 
-public final class Util {
-    private Util() {
+/**
+ * Surrender utils
+ * @author Heckerpowered
+ */
+public final class SurrenderUtil {
+    private SurrenderUtil() {
     }
 
     public static void synchornizeMovement(@Nullable Entity entity) {
