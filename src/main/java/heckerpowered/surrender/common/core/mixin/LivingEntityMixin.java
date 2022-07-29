@@ -12,7 +12,7 @@ import net.minecraft.world.entity.ai.attributes.Attributes;
 import net.minecraft.world.item.enchantment.EnchantmentHelper;
 
 @Mixin(LivingEntity.class)
-public class MixinLivingEntity {
+public class LivingEntityMixin {
     public final LivingEntity self = (LivingEntity) (Object) this;
 
     @Inject(method = "getAttributeValue", at = @At("TAIL"), cancellable = true)

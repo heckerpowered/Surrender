@@ -3,8 +3,8 @@
     "package": "heckerpowered.surrender.common.core.mixin",
     "refmap": "mixins.surrender.refmap.json",
     "mixins": [
-        "MixinItemStack",
-        "MixinLivingEntity"
+        "ItemStackMixin",
+        "LivingEntityMixin"
     ],
     "client": [],
     "server": [],

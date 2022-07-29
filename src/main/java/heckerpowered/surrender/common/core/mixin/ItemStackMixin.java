@@ -12,7 +12,7 @@ import net.minecraft.world.item.enchantment.EnchantmentHelper;
 import net.minecraft.world.level.Level;
 
 @Mixin(ItemStack.class)
-public class MixinItemStack {
+public class ItemStackMixin {
     public final ItemStack self = (ItemStack) (Object) this;
 
     @Inject(method = "onUseTick", at = @At("HEAD"), cancellable = true)
