@@ -13,7 +13,9 @@ public class ClientEventHandler {
 
     @SubscribeEvent
     public static final void onRenderPlayer(final RenderPlayerEvent event) {
-        if (event.getPlayer().getEntityData().get(EnchantmentEventHandler.DATA_BLINK_ACTIVE)) {
+        final var data = event.getEntity().getEntityData();
+        if (data.get(EnchantmentEventHandler.DATA_BLINK_ACTIVE)
+                || data.get(EnchantmentEventHandler.DATA_BLISTERING_ACTIVE)) {
             //
             // Make player invisible.
             //

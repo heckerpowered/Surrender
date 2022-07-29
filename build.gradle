@@ -1,22 +1,10 @@
-buildscript {
-    repositories {
-        // These repositories are only for Gradle plugins, put any other repositories in the repository block further below
-        maven { url = 'https://maven.minecraftforge.net' }
-        maven { url = 'https://repo.spongepowered.org/maven' }
-        mavenCentral()
-    }
-    dependencies {
-        classpath group: 'net.minecraftforge.gradle', name: 'ForgeGradle', version: '5.1.+'
-        // MixinGradle:
-        classpath 'org.spongepowered:mixingradle:0.7.+'
-    }
+plugins {
+    id 'eclipse'
+    id 'maven-publish'
+    id 'net.minecraftforge.gradle' version '5.1.+'
+    id 'org.parchmentmc.librarian.forgegradle' version '1.+'
+    id 'org.spongepowered.mixin' version '0.7.+'
 }
-
-apply plugin: 'net.minecraftforge.gradle'
-// Only edit below this line, the above code adds and enables the necessary things for Forge to be setup.
-apply plugin: 'eclipse'
-apply plugin: 'maven-publish'
-apply plugin: 'org.spongepowered.mixin'
 
 version = '1.0'
 group = 'heckerpowered.surrender' // http://maven.apache.org/guides/mini/guide-naming-conventions.html
@@ -40,7 +28,7 @@ minecraft {
     //
     // Use non-default mappings at your own risk. They may not always work.
     // Simply re-run your setup task after changing the mappings to update your workspace.
-    mappings channel: 'official', version: '1.19'
+    mappings channel: mappings_channel, version: mappings_version
 
     // accessTransformer = file('src/main/resources/META-INF/accesstransformer.cfg') // Currently, this location cannot be changed from the default.
 
@@ -63,9 +51,7 @@ minecraft {
             property 'forge.logging.console.level', 'debug'
 
             // Comma-separated list of namespaces to load gametests from. Empty = all namespaces.
-            property 'forge.enabledGameTestNamespaces', 'surrender'
-
-            arg '-mixin.config=mixins.surrender.json'
+            property 'forge.enabledGameTestNamespaces', 'examplemod'
 
             mods {
                 surrender {
@@ -81,9 +67,7 @@ minecraft {
 
             property 'forge.logging.console.level', 'debug'
 
-            property 'forge.enabledGameTestNamespaces', 'surrender'
-
-            arg '-mixin.config=mixins.surrender.json'
+            property 'forge.enabledGameTestNamespaces', 'examplemod'
 
             mods {
                 surrender {
@@ -102,9 +86,7 @@ minecraft {
 
             property 'forge.logging.console.level', 'debug'
 
-            property 'forge.enabledGameTestNamespaces', 'surrender'
-
-            arg '-mixin.config=mixins.surrender.json'
+            property 'forge.enabledGameTestNamespaces', 'examplemod'
 
             mods {
                 surrender {
@@ -121,9 +103,7 @@ minecraft {
             property 'forge.logging.console.level', 'debug'
 
             // Specify the modid for data generation, where to output the resulting resource, and where to look for existing resources.
-            args '--mod', 'surrender', '--all', '--output', file('src/generated/resources/'), '--existing', file('src/main/resources/')
-
-            arg '-mixin.config=mixins.surrender.json'
+            args '--mod', 'examplemod', '--all', '--output', file('src/generated/resources/'), '--existing', file('src/main/resources/')
 
             mods {
                 surrender {
@@ -151,7 +131,7 @@ dependencies {
     // Specify the version of Minecraft to use. If this is any group other than 'net.minecraft', it is assumed
     // that the dep is a ForgeGradle 'patcher' dependency, and its patches will be applied.
     // The userdev artifact is a special name and will get all sorts of transformations applied to it.
-    minecraft 'net.minecraftforge:forge:1.19-41.0.63'
+    minecraft "net.minecraftforge:forge:1.19-${forge_version}"
 
     // Real mod deobf dependency examples - these get remapped to your current mappings
     // compileOnly fg.deobf("mezz.jei:jei-${mc_version}:${jei_version}:api") // Adds JEI API as a compile dependency
@@ -164,15 +144,17 @@ dependencies {
     // For more info...
     // http://www.gradle.org/docs/current/userguide/artifact_dependencies_tutorial.html
     // http://www.gradle.org/docs/current/userguide/dependency_management.html
-    annotationProcessor 'org.spongepowered:mixin:0.8.5:processor'
+    // Mixin annotation processor - generates the refmap
+    annotationProcessor "org.spongepowered:mixin:${mixin_version}:processor"
 }
+
 // Example for how to get properties into the manifest for reading at runtime.
 jar {
     manifest {
         attributes([
-                "Specification-Title"     : "surrender",
+                "Specification-Title"     : "Surrender",
                 "Specification-Vendor"    : "Heckerpowered",
-                "Specification-Version"   : "1", // We are version 1 of ourselves
+                "Specification-Version"   : project.jar.archiveVersion,
                 "Implementation-Title"    : project.name,
                 "Implementation-Version"  : project.jar.archiveVersion,
                 "Implementation-Vendor"   : "Heckerpowered",
@@ -204,8 +186,14 @@ tasks.withType(JavaCompile).configureEach {
     options.encoding = 'UTF-8' // Use the UTF-8 charset for Java compilation
 }
 
+
 mixin {
-    // MixinGradle Settings
-    add sourceSets.main, 'mixins.surrender.refmap.json'
-    config 'mixins.surrender.json'
+    add sourceSets.main, "mixins.${mod_id}.refmap.json"
+
+    // Sets up the mixin config; this gets added to run configurations and the manifest in the final jar
+    config "mixins.${mod_id}.json"
+
+    // Enables exporting mixin-changed classes to .mixin.out in the run folder
+    debug.export = true
+    dumpTargetOnFailure = true
 }

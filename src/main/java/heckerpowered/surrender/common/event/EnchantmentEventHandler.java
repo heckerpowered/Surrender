@@ -26,7 +26,7 @@ import net.minecraft.world.level.Explosion;
 import net.minecraft.world.phys.Vec3;
 import net.minecraftforge.api.distmarker.Dist;
 import net.minecraftforge.event.ForgeEventFactory;
-import net.minecraftforge.event.entity.EntityJoinWorldEvent;
+import net.minecraftforge.event.entity.EntityJoinLevelEvent;
 import net.minecraftforge.event.entity.ProjectileImpactEvent;
 import net.minecraftforge.event.entity.EntityEvent.EntityConstructing;
 import net.minecraftforge.event.entity.living.LivingAttackEvent;
@@ -44,7 +44,7 @@ public final class EnchantmentEventHandler {
 
     public static final EntityDataAccessor<Boolean> DATA_BLINK_ACTIVE = SynchedEntityData.defineId(
             Player.class, EntityDataSerializers.BOOLEAN);
-    public static final EntityDataAccessor<Boolean> DATA_BLISTERING = SynchedEntityData.defineId(Player.class,
+    public static final EntityDataAccessor<Boolean> DATA_BLISTERING_ACTIVE = SynchedEntityData.defineId(Player.class,
             EntityDataSerializers.BOOLEAN);
 
     @SubscribeEvent
@@ -89,10 +89,12 @@ public final class EnchantmentEventHandler {
     public static final void onRightClickItem(final RightClickItem event) {
         final var item = event.getItemStack();
         final var tag = item.getTag();
-        final var player = event.getPlayer();
+        final var player = event.getEntity();
         final var synchornizedData = player.getEntityData();
         final var playerPersistentData = player.getPersistentData();
         final var interactionHand = event.getHand();
+        final var x = player.getX();
+        final var z = player.getZ();
 
         if (player.getLevel().isClientSide()) {
             return;
@@ -104,16 +106,16 @@ public final class EnchantmentEventHandler {
         // Determine whether "Seeker" enchantment is available.
         //
         if (tag != null && tag.getBoolean("surrender_seeker_available")) {
-            final var x = tag.getDouble("surrender_seeker_x");
-            final var y = tag.getDouble("surrender_seeker_y");
-            final var z = tag.getDouble("surrender_seeker_z");
+            final var seekerX = tag.getDouble("surrender_seeker_x");
+            final var seekerY = tag.getDouble("surrender_seeker_y");
+            final var seekerZ = tag.getDouble("surrender_seeker_z");
             final var seekerLevel = tag.getInt("surrender_seeker_level");
 
             //
             // "Seeker" enchantment can only teleport while player is inside 20m of the
             // target.
             //
-            if (player.distanceToSqr(x, y, z) < 400.0D) {
+            if (player.distanceToSqr(seekerX, seekerY, seekerZ) < 400.0D) {
 
                 //
                 // Teleport will set player's motion to zero, so we need to set it back to the
@@ -124,7 +126,7 @@ public final class EnchantmentEventHandler {
                 //
                 // Teleport player.
                 //
-                player.teleportTo(x, y, z);
+                player.teleportTo(seekerX, seekerY, seekerZ);
 
                 //
                 // Set player's motion back to the original value.
@@ -157,9 +159,9 @@ public final class EnchantmentEventHandler {
                         //
                         // Knockback victim.
                         //
-                        livingVictim.setDeltaMovement((livingVictim.getX() - x) * 0.5,
+                        livingVictim.setDeltaMovement((livingVictim.getX() - seekerX) * 0.5,
                                 livingVictim.getDeltaMovement().y,
-                                (livingVictim.getZ() - z) * 0.5);
+                                (livingVictim.getZ() - seekerZ) * 0.5);
 
                         //
                         // Synchornize victim's motion if the victim is a player.
@@ -251,10 +253,13 @@ public final class EnchantmentEventHandler {
                 //
                 ScheduledTickEvent.scheduled(new ScheduledTickTask(3, () -> {
                     if (player instanceof ServerPlayer serverPlayer) {
+                        final var multipier = 3;
+
                         //
                         // Make the player dash.
                         //
-                        player.setDeltaMovement(forward.x * 3, player.getDeltaMovement().y, forward.z * 3);
+                        player.setDeltaMovement(forward.x * multipier, player.getDeltaMovement().y,
+                                forward.z * multipier);
 
                         //
                         // The server does not automatically synchronize the player's motion,
@@ -304,7 +309,7 @@ public final class EnchantmentEventHandler {
                         // no durability is consumed.
                         //
                         if (victim.isAttackable()
-                                && !victim.hurt(DamageSource.playerAttack(player), damageBouns * 0.4F * blinkLevel)) {
+                                && victim.hurt(DamageSource.playerAttack(player), damageBouns * 0.4F * blinkLevel)) {
                             //
                             // Each hit on target costs one durability, and all entities will take damage
                             // regradless
@@ -395,11 +400,17 @@ public final class EnchantmentEventHandler {
                 playerPersistentData.putBoolean("surrender_blistering_active", true);
 
                 //
+                // Mark "Blistering" enchantment as activated, so that any damage won't taken by
+                // player.
+                //
+                synchornizedData.set(DATA_BLISTERING_ACTIVE, true);
+
+                //
                 // Make the player do uniform linear motion
                 //
-                ScheduledTickEvent.scheduled(new ScheduledTickTask(3, () -> {
+                ScheduledTickEvent.scheduled(new ScheduledTickTask(10, () -> {
                     if (player instanceof ServerPlayer serverPlayer) {
-                        player.setDeltaMovement(forward.x * 3, player.getDeltaMovement().y, forward.z * 3);
+                        player.setDeltaMovement(forward.x * 2.5, player.getDeltaMovement().y, forward.z * 2.5);
 
                         SurrenderUtil.synchornizeMovement(player);
                     }
@@ -429,12 +440,14 @@ public final class EnchantmentEventHandler {
                         //
                         damageBouns += (float) player.getAttributeValue(Attributes.ATTACK_DAMAGE);
 
+                        victim.invulnerableTime = 0;
+
                         //
                         // Deal damage (40% AD * Enchant level).
                         // If the attack was blocked, or the attack cannot be applied,
                         // no durability is consumed.
                         //
-                        if (victim.isAttackable() && !victim.hurt(
+                        if (victim.isAttackable() && victim.hurt(
                                 DamageSource.playerAttack(player), damageBouns * 0.4F * blisteringLevel)) {
                             //
                             // Each hit on target costs one durability, and all entities will take damage
@@ -453,14 +466,25 @@ public final class EnchantmentEventHandler {
                                 ForgeEventFactory.onPlayerDestroyItem(player, item, interactionHand);
                             });
 
+                            //
+                            // Knockback victim.
+                            //
+                            victim.setDeltaMovement((victim.getX() - x) * 0.5,
+                                    victim.getDeltaMovement().y,
+                                    (victim.getZ() - z) * 0.5);
+
+                            //
+                            // Synchornize victim's motion if the victim is a player.
+                            //
+                            SurrenderUtil.synchornizeMovement(victim);
+
                             tag.putInt("surrender_blistering_last_active_time", 0);
+
+                            DistExecutor.safeRunWhenOn(Dist.CLIENT, () -> ClientMethod::playSweepSound);
                         }
-
-                        DistExecutor.safeRunWhenOn(Dist.CLIENT, () -> ClientMethod::playSweepSound);
-
                     }
                 }).end(() -> {
-                    synchornizedData.set(DATA_BLISTERING, false);
+                    synchornizedData.set(DATA_BLISTERING_ACTIVE, false);
 
                     //
                     // Visual effects.
@@ -486,7 +510,7 @@ public final class EnchantmentEventHandler {
 
     @SubscribeEvent
     public static final void onLivingHurt(final LivingHurtEvent event) {
-        final var entity = event.getEntityLiving();
+        final var entity = event.getEntity();
 
         if (entity.level.isClientSide) {
             return;
@@ -574,7 +598,7 @@ public final class EnchantmentEventHandler {
             //
             // Caculate coolddown for each armor seperatly (30s)
             //
-            for (final var armor : event.getEntityLiving().getArmorSlots()) {
+            for (final var armor : event.getEntity().getArmorSlots()) {
                 final var level = EnchantmentHelper.getTagEnchantmentLevel(SurrenderEnchantments.GUARDIAN.get(), armor);
 
                 //
@@ -670,7 +694,7 @@ public final class EnchantmentEventHandler {
 
     @SubscribeEvent
     public static void onLivingDeath(final LivingDeathEvent event) {
-        final var entity = event.getEntityLiving();
+        final var entity = event.getEntity();
         final var sourceEntiity = event.getSource().getEntity();
         final var data = entity.getPersistentData();
 
@@ -760,7 +784,7 @@ public final class EnchantmentEventHandler {
 
     @SubscribeEvent
     public static void onLivingAttack(final LivingAttackEvent event) {
-        final var entity = event.getEntityLiving();
+        final var entity = event.getEntity();
         final var synchornizedData = entity.getEntityData();
         final var source = event.getSource();
         if (entity.level.isClientSide) {
@@ -771,7 +795,7 @@ public final class EnchantmentEventHandler {
         // Avoiding taking damage while blinking.
         //
         if (entity instanceof Player
-                && (synchornizedData.get(DATA_BLINK_ACTIVE) || synchornizedData.get(DATA_BLISTERING))) {
+                && (synchornizedData.get(DATA_BLINK_ACTIVE) || synchornizedData.get(DATA_BLISTERING_ACTIVE))) {
             event.setCanceled(true);
         }
 
@@ -790,7 +814,7 @@ public final class EnchantmentEventHandler {
     }
 
     @SubscribeEvent
-    public static void onEntityJoinWorld(final EntityJoinWorldEvent event) {
+    public static void onEntityJoinWorld(final EntityJoinLevelEvent event) {
         final var entity = event.getEntity();
         if (entity.level.isClientSide) {
             return;
@@ -844,7 +868,7 @@ public final class EnchantmentEventHandler {
         final var entity = event.getEntity();
         if (entity instanceof Player) {
             entity.getEntityData().define(DATA_BLINK_ACTIVE, false);
-            entity.getEntityData().define(DATA_BLISTERING, false);
+            entity.getEntityData().define(DATA_BLISTERING_ACTIVE, false);
         }
     }
 }

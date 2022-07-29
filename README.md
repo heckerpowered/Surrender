@@ -2,8 +2,8 @@
 
 ## Introduction
 
-Surrender Mod is a open-source Minecraft Mod with a focus on giving players greater attackability
-and more countermeasures. Mainly to add special abilities to the player's weapons, more possibilities
+Surrender Mod is a open-source Minecraft Mod with a focus on enhance players' combat experience.
+Mainly to add special abilities to the player's weapons, more possibilities
 
 Follow **Surrender Mod** on **[Discord](https://discord.gg/cgNQPWExqj)** to get notified about new released.
 
@@ -146,7 +146,7 @@ ___
 
 #### Blistering
 
-Dashes forward 8 blocks in 3 ticks, during the dashing, you are **immune to damage and invisible**.
+Dashes forward in 10 ticks, during the dashing, you are **immune to damage and invisible**.
 
 Meanwhile, deal damage (0.4 \* *lvl* \* *damage*) to all entities in the dash path, if any *Entities* are hit, reset the **cooldown time**
 
