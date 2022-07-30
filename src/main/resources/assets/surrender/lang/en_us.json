@@ -14,5 +14,7 @@
     "enchantment.surrender.experience": "Experience",
     "enchantment.surrender.haste": "Haste",
     "enchantment.surrender.fast_bow": "Fast Bow",
-    "enchantment.surrender.blistering": "Blistering"
+    "enchantment.surrender.blistering": "Blistering",
+    "itemGroup.surrender": "Surrender",
+    "block.surrender.neculear_tnt": "Mini Civilian Neculear Tnt"
 }

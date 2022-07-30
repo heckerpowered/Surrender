@@ -1,7 +1,7 @@
 package heckerpowered.surrender.common.event;
 
 import heckerpowered.surrender.client.ClientMethod;
-import heckerpowered.surrender.common.content.SurrenderEnchantments;
+import heckerpowered.surrender.common.content.enchantment.SurrenderEnchantments;
 import heckerpowered.surrender.common.core.util.SurrenderUtil;
 import heckerpowered.surrender.common.core.util.scheduled.ScheduledTickTask;
 import net.minecraft.network.syncher.EntityDataAccessor;
