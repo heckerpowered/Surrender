@@ -18,4 +18,7 @@ public final class SurrenderItems {
     public static final RegistryObject<BlockItem> NECULEAR_TNT = DEFERRED_REGISTER.register("neculear_tnt",
             () -> new BlockItem(SurrenderBlocks.NECULEAR_TNT.get(),
                     new Item.Properties().tab(SurrenderMod.CREATIVE_MODE_TAB)));
+
+    public static final RegistryObject<ReverseFateItem> REVERSE_FATE = DEFERRED_REGISTER.register("reverse_fate",
+            ReverseFateItem::new);
 }

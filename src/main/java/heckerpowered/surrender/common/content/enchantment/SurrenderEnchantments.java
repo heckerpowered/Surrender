@@ -44,4 +44,6 @@ public final class SurrenderEnchantments {
             FastBowEnchantment::new);
     public static final RegistryObject<BlisteringEnchantment> BLISTERING = DEFERRED_REGISTER.register("blistering",
             BlisteringEnchantment::new);
+    public static final RegistryObject<ParryEnchantment> PARRY = DEFERRED_REGISTER.register("parry",
+            ParryEnchantment::new);
 }

@@ -2,7 +2,6 @@ package heckerpowered.surrender.common.event;
 
 import heckerpowered.surrender.client.ClientMethod;
 import heckerpowered.surrender.common.content.enchantment.SurrenderEnchantments;
-import heckerpowered.surrender.common.core.util.SurrenderUtil;
 import heckerpowered.surrender.common.core.util.scheduled.ScheduledTickTask;
 import net.minecraft.network.syncher.EntityDataAccessor;
 import net.minecraft.network.syncher.EntityDataSerializers;
@@ -134,9 +133,10 @@ public final class EnchantmentEventHandler {
                 player.setDeltaMovement(movement);
 
                 //
-                // Synchornize player's motion.
+                // Set the player's hurtMarked field to true, the player's movement will be synchronized
+                // to client next tick, and this field will be set to false.
                 //
-                SurrenderUtil.synchornizeMovement(player);
+                player.hurtMarked = true;
 
                 //
                 // Visual effects
@@ -163,10 +163,13 @@ public final class EnchantmentEventHandler {
                                 livingVictim.getDeltaMovement().y,
                                 (livingVictim.getZ() - seekerZ) * 0.5);
 
-                        //
-                        // Synchornize victim's motion if the victim is a player.
-                        //
-                        SurrenderUtil.synchornizeMovement(livingVictim);
+                        if (livingVictim instanceof ServerPlayer serverPlayer) {
+                            //
+                            // Set the player's hurtMarked field to true, the player's movement will be synchronized
+                            // to client next tick, and this field will be set to false.
+                            //
+                            player.hurtMarked = true;
+                        }
                     }
                 }
 
@@ -262,10 +265,10 @@ public final class EnchantmentEventHandler {
                                 forward.z * multipier);
 
                         //
-                        // The server does not automatically synchronize the player's motion,
-                        // so we need to synchronize it manually.
+                        // Set the player's hurtMarked field to true, the player's movement will be synchronized
+                        // to client next tick, and this field will be set to false.
                         //
-                        SurrenderUtil.synchornizeMovement(player);
+                        player.hurtMarked = true;
 
                     }
                 }).end(() -> {
@@ -358,10 +361,10 @@ public final class EnchantmentEventHandler {
                     player.setDeltaMovement(0, player.getDeltaMovement().y, 0);
 
                     //
-                    // The server does not automatically synchronize the player's motion,
-                    // so we need to synchronize it manually.
+                    // Set the player's hurtMarked field to true, the player's movement will be synchronized
+                    // to client next tick, and this field will be set to false.
                     //
-                    SurrenderUtil.synchornizeMovement(player);
+                    player.hurtMarked = true;
                 }));
 
                 //
@@ -412,7 +415,11 @@ public final class EnchantmentEventHandler {
                     if (player instanceof ServerPlayer serverPlayer) {
                         player.setDeltaMovement(forward.x * 2.5, player.getDeltaMovement().y, forward.z * 2.5);
 
-                        SurrenderUtil.synchornizeMovement(player);
+                        //
+                        // Set the player's hurtMarked field to true, the player's movement will be synchronized
+                        // to client next tick, and this field will be set to false.
+                        //
+                        player.hurtMarked = true;
                     }
                     for (var victim : player.level.getEntities(player,
                             player.getBoundingBox().inflate(1.3D + (blisteringLevel / 10)))) {
@@ -474,9 +481,11 @@ public final class EnchantmentEventHandler {
                                     (victim.getZ() - z) * 0.5);
 
                             //
-                            // Synchornize victim's motion if the victim is a player.
+                            // Set the victim's hurtMarked field to true, if the victim is a player,
+                            // its movement will be synchronized to client next tick, and this field
+                            // will be set to false.
                             //
-                            SurrenderUtil.synchornizeMovement(victim);
+                            victim.hurtMarked = true;
 
                             tag.putInt("surrender_blistering_last_active_time", 0);
 
@@ -497,10 +506,11 @@ public final class EnchantmentEventHandler {
                     player.setDeltaMovement(0, player.getDeltaMovement().y, 0);
 
                     //
-                    // The server does not automatically synchronize the player's motion,
-                    // so we need to synchronize it manually.
+                    // Set the victim's hurtMarked field to true, if the victim is a player,
+                    // its movement will be synchronized to client next tick, and this field
+                    // will be set to false.
                     //
-                    SurrenderUtil.synchornizeMovement(player);
+                    player.hurtMarked = true;
                 }));
 
                 tag.putInt("surrender_blistering_last_active_time", player.tickCount);

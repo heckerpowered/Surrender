@@ -16,5 +16,6 @@
     "enchantment.surrender.fast_bow": "快速充能",
     "enchantment.surrender.blistering": "急袭",
     "itemGroup.surrender": "征服者",
-    "block.surrender.neculear_tnt": "小型民用核武器"
+    "block.surrender.neculear_tnt": "小型民用核武器",
+    "enchantment.surrender.parry": "格挡"
 }
