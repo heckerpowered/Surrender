@@ -4,7 +4,8 @@
     "refmap": "mixins.surrender.refmap.json",
     "mixins": [
         "ItemStackMixin",
-        "LivingEntityMixin"
+        "LivingEntityMixin",
+        "MobMixin"
     ],
     "client": [],
     "server": [],

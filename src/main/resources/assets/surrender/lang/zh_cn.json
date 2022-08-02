@@ -17,5 +17,7 @@
     "enchantment.surrender.blistering": "急袭",
     "itemGroup.surrender": "征服者",
     "block.surrender.neculear_tnt": "小型民用核武器",
-    "enchantment.surrender.parry": "格挡"
+    "enchantment.surrender.parry": "格挡",
+    "effect.surrender.untargetable": "无法选取",
+    "item.surrender.reverse_fate": "逆天改命"
 }

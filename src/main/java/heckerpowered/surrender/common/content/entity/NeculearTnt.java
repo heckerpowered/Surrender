@@ -231,11 +231,6 @@ public final class NeculearTnt extends Entity {
 
     public final void explode() {
         //
-        // Explode
-        //
-        level.explode(igniter, getX(), getY(0.0625D), getZ(), getExplosionRadius(), Explosion.BlockInteraction.BREAK);
-
-        //
         // Deals damage equal to 100% of their max health to all entities within 24 meters of the center
         // of the explosion
         //
@@ -244,11 +239,6 @@ public final class NeculearTnt extends Entity {
         for (final var entity : level.getEntities(igniter,
                 new AABB(position, position).inflate(getExplosionRadius() * 2))) {
             if (entity instanceof LivingEntity living) {
-                if (living.distanceToSqr(this) <= 576.0D /* 24 * 24 = 576 */) {
-                    entity.invulnerableTime = 0;
-                    living.hurt(damageSource, living.getMaxHealth());
-                }
-
                 living.addEffect(new MobEffectInstance(MobEffects.POISON, 600));
                 living.addEffect(new MobEffectInstance(MobEffects.WITHER, 600));
                 living.addEffect(new MobEffectInstance(MobEffects.MOVEMENT_SLOWDOWN, 600));
@@ -260,7 +250,17 @@ public final class NeculearTnt extends Entity {
                 living.addEffect(new MobEffectInstance(MobEffects.DARKNESS, 600));
                 living.addEffect(new MobEffectInstance(MobEffects.WEAKNESS, 600));
                 living.addEffect(new MobEffectInstance(MobEffects.UNLUCK, 600));
+
+                if (living.distanceToSqr(this) <= 576.0D /* 24 * 24 = 576 */) {
+                    entity.invulnerableTime = 0;
+                    living.hurt(damageSource, living.getMaxHealth());
+                }
             }
         }
+
+        //
+        // Explode
+        //
+        level.explode(igniter, getX(), getY(0.0625D), getZ(), getExplosionRadius(), Explosion.BlockInteraction.BREAK);
     }
 }

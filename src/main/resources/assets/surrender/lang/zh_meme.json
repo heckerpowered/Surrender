@@ -7,7 +7,7 @@
     "enchantment.surrender.blink": "鬼影步",
     "enchantment.surrender.decisive_strike": "毁灭打击",
     "enchantment.surrender.last_stand": "屹立不倒",
-    "enchantment.surrender.ripper": "恐慌降临",
+    "enchantment.surrender.ripper": "一刀嘎了",
     "enchantment.surrender.magic_reduction": "法术免疫",
     "enchantment.surrender.undying": "死去活来",
     "enchantment.surrender.explosion": "核弹射物",
@@ -16,6 +16,8 @@
     "enchantment.surrender.fast_bow": "快速充能",
     "enchantment.surrender.blistering": "怼脸",
     "itemGroup.surrender": "真服者",
-    "block.surrender.neculear_tnt": "民用大伊万",
-    "enchantment.surrender.parry": "格挡"
+    "block.surrender.neculear_tnt": "小型大伊万",
+    "enchantment.surrender.parry": "格挡",
+    "effect.surrender.untargetable": "无法选取",
+    "item.surrender.reverse_fate": "一次性安全用物品"
 }
