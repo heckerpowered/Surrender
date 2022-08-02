@@ -2,7 +2,7 @@ package heckerpowered.surrender.common.network.synchronization;
 
 import java.util.Optional;
 
-import heckerpowered.surrender.common.core.Location;
+import heckerpowered.surrender.common.util.Location;
 import net.minecraft.core.Registry;
 import net.minecraft.network.syncher.EntityDataSerializer;
 import net.minecraft.world.phys.Vec3;
