@@ -2,7 +2,7 @@ package heckerpowered.surrender.common.event;
 
 import java.util.concurrent.ConcurrentLinkedDeque;
 
-import heckerpowered.surrender.common.core.util.scheduled.ScheduledTickTask;
+import heckerpowered.surrender.common.util.scheduled.ScheduledTickTask;
 import net.minecraftforge.event.TickEvent.Phase;
 import net.minecraftforge.event.TickEvent.ServerTickEvent;
 import net.minecraftforge.eventbus.api.SubscribeEvent;

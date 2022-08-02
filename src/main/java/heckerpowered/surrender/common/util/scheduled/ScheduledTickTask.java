@@ -1,4 +1,4 @@
-package heckerpowered.surrender.common.core.util.scheduled;
+package heckerpowered.surrender.common.util.scheduled;
 
 import java.util.Optional;
 import java.util.function.BooleanSupplier;

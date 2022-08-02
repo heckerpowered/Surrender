@@ -4,9 +4,9 @@ import javax.annotation.Nonnull;
 
 import heckerpowered.surrender.common.SurrenderMod;
 import heckerpowered.surrender.common.content.effect.SurrenderMobEffects;
-import heckerpowered.surrender.common.core.util.player.PlayerUtil;
 import heckerpowered.surrender.common.network.SurrenderNetwork;
 import heckerpowered.surrender.common.network.clientbound.ClientboundDisplayItemActivationPacket;
+import heckerpowered.surrender.common.util.player.PlayerUtil;
 import net.minecraft.server.level.ServerPlayer;
 import net.minecraft.world.effect.MobEffectInstance;
 import net.minecraft.world.effect.MobEffects;

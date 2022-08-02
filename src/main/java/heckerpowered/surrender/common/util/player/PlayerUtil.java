@@ -1,4 +1,4 @@
-package heckerpowered.surrender.common.core.util.player;
+package heckerpowered.surrender.common.util.player;
 
 import java.util.Optional;
 import java.util.function.Predicate;
