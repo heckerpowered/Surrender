@@ -1,0 +1,12 @@
+{
+    "parent": "surrender:root",
+    "criteria": {
+        "trigger": "surrender:nuclear_impact"
+    },
+    "display": {
+        "description": {
+            "translate": "advancements.surrender.nuclear_impact.description"
+        },
+        "icon": {}
+    }
+}

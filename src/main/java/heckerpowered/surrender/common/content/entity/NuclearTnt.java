@@ -5,7 +5,11 @@ import javax.annotation.Nonnull;
 import javax.annotation.Nullable;
 
 import org.apache.http.util.Asserts;
+import org.slf4j.Marker;
+import org.slf4j.MarkerFactory;
 
+import heckerpowered.surrender.common.SurrenderMod;
+import heckerpowered.surrender.common.content.level.NuclearExplosion;
 import net.minecraft.FieldsAreNonnullByDefault;
 import net.minecraft.MethodsReturnNonnullByDefault;
 import net.minecraft.core.particles.ParticleTypes;
@@ -14,16 +18,19 @@ import net.minecraft.network.protocol.Packet;
 import net.minecraft.network.syncher.EntityDataAccessor;
 import net.minecraft.network.syncher.EntityDataSerializers;
 import net.minecraft.network.syncher.SynchedEntityData;
-import net.minecraft.world.damagesource.DamageSource;
 import net.minecraft.world.effect.MobEffectInstance;
 import net.minecraft.world.effect.MobEffects;
 import net.minecraft.world.entity.Entity;
 import net.minecraft.world.entity.EntityType;
 import net.minecraft.world.entity.LivingEntity;
 import net.minecraft.world.entity.MoverType;
-import net.minecraft.world.level.Explosion;
 import net.minecraft.world.level.Level;
+import net.minecraft.world.level.Explosion.BlockInteraction;
 import net.minecraft.world.phys.AABB;
+import net.minecraftforge.event.ForgeEventFactory;
+import net.minecraftforge.event.entity.living.LivingHurtEvent;
+import net.minecraftforge.eventbus.api.SubscribeEvent;
+import net.minecraftforge.fml.common.Mod;
 import net.minecraftforge.network.NetworkHooks;
 
 /**
@@ -34,17 +41,18 @@ import net.minecraftforge.network.NetworkHooks;
  */
 @MethodsReturnNonnullByDefault
 @FieldsAreNonnullByDefault
-public final class NeculearTnt extends Entity {
+@Mod.EventBusSubscriber
+public final class NuclearTnt extends Entity {
 
     /**
      * NBT won't synchornize data when there is something change, so define a synced data
      * in order to synchornize data to client.
      */
-    private static final EntityDataAccessor<Integer> DATA_FUSE = SynchedEntityData.defineId(NeculearTnt.class,
+    private static final EntityDataAccessor<Integer> DATA_FUSE = SynchedEntityData.defineId(NuclearTnt.class,
             EntityDataSerializers.INT);
 
     private static final EntityDataAccessor<Float> DATA_EXPLOSION_RANGE = SynchedEntityData.defineId(
-            NeculearTnt.class, EntityDataSerializers.FLOAT);
+            NuclearTnt.class, EntityDataSerializers.FLOAT);
 
     /**
      * Default fuse time, in ticks.
@@ -56,18 +64,25 @@ public final class NeculearTnt extends Entity {
      */
     private static final float DEFAULT_EXPLOSISON_RADIUS = 50.0F;
 
+    private static final String NUCLEAR_TNT_IMPACT_STRING = "NuclearTntImpact";
+
+    /**
+     * Directly reference a slf4j marker
+     */
+    public static final Marker MARKER = MarkerFactory.getMarker("NUCLEARTNT");
+
     /**
      * The entity that ignited this tnt.
      */
     @Nullable
     private LivingEntity igniter;
 
-    public NeculearTnt(EntityType<?> entityType, Level level) {
+    public NuclearTnt(EntityType<?> entityType, Level level) {
         super(entityType, level);
     }
 
     /**
-     * Create a new instance of {@link NeculearTnt}, and set this tnt's position to supplied {@code x},
+     * Create a new instance of {@link NuclearTnt}, and set this tnt's position to supplied {@code x},
      * {@code y}, {@code z} and grant a random movement.
      * <p> Movement on x-axis: <pre>{@code -Math.sin(level.random.nextDouble() * Math.PI * 2.0F) * 0.02D}</pre>
      * <p> Movement on z-axis: <pre>{@code -Math.cos(level.random.nextDouble() * Math.PI * 2.0F) * 0.02D}</pre>
@@ -79,7 +94,7 @@ public final class NeculearTnt extends Entity {
      * @param z the z coordinate of the entity
      * @param owner the entity who ignited the tnt.
      */
-    public NeculearTnt(@Nonnull final Level level, final double x, final double y, final double z,
+    public NuclearTnt(@Nonnull final Level level, final double x, final double y, final double z,
             @Nullable final LivingEntity owner) {
         super(SurrenderEntityType.NECULEAR_TNT.get(), level);
         setPos(x, y, z);
@@ -230,12 +245,18 @@ public final class NeculearTnt extends Entity {
     }
 
     public final void explode() {
+        final var explosion = new NuclearExplosion(level, igniter, getX(), getY(0.0625D), getZ(), getExplosionRadius(),
+                true, BlockInteraction.DESTROY);
+        if (ForgeEventFactory.onExplosionStart(level, explosion)) {
+            SurrenderMod.LOGGER.debug(MARKER, "Nuclear tnt explosion has been cancelled.");
+            return;
+        }
+
         //
         // Deals damage equal to 100% of their max health to all entities within 24 meters of the center
         // of the explosion
         //
         final var position = position();
-        final var damageSource = DamageSource.explosion(igniter);
         for (final var entity : level.getEntities(igniter,
                 new AABB(position, position).inflate(getExplosionRadius() * 2))) {
             if (entity instanceof LivingEntity living) {
@@ -251,16 +272,22 @@ public final class NeculearTnt extends Entity {
                 living.addEffect(new MobEffectInstance(MobEffects.WEAKNESS, 600));
                 living.addEffect(new MobEffectInstance(MobEffects.UNLUCK, 600));
 
-                if (living.distanceToSqr(this) <= 576.0D /* 24 * 24 = 576 */) {
-                    entity.invulnerableTime = 0;
-                    living.hurt(damageSource, living.getMaxHealth());
+                if (living.distanceToSqr(this) <= Math.pow(getExplosionRadius(), 2) * 2 /* 24 * 24 = 576 */) {
+                    living.getPersistentData().putBoolean(NUCLEAR_TNT_IMPACT_STRING, true);
                 }
             }
         }
 
-        //
-        // Explode
-        //
-        level.explode(igniter, getX(), getY(0.0625D), getZ(), getExplosionRadius(), Explosion.BlockInteraction.BREAK);
+        explosion.explode();
+        explosion.finalizeExplosion(true);
+    }
+
+    @SubscribeEvent
+    public static final void onLivingAttack(@Nonnull final LivingHurtEvent event) {
+        final var entity = event.getEntity();
+        if (entity.getPersistentData().getBoolean(NUCLEAR_TNT_IMPACT_STRING)) {
+            entity.getPersistentData().remove(NUCLEAR_TNT_IMPACT_STRING);
+            event.setAmount(event.getAmount() + entity.getMaxHealth());
+        }
     }
 }

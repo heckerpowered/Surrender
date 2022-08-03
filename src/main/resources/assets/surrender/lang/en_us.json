@@ -16,8 +16,10 @@
     "enchantment.surrender.fast_bow": "Fast Bow",
     "enchantment.surrender.blistering": "Blistering",
     "itemGroup.surrender": "Surrender",
-    "block.surrender.neculear_tnt": "Mini Civilian Neculear Tnt",
+    "block.surrender.nuclear_tnt": "Mini Civilian Nuclear Tnt",
     "enchantment.surrender.parry": "Parry",
     "effect.surrender.untargetable": "Untargetable",
-    "item.surrender.reverse_fate": "Reverse Fate"
+    "item.surrender.reverse_fate": "Reverse Fate",
+    "advancements.surrender.root.description": "Surrender",
+    "advancements.surrender.root.title": "Surrender"
 }

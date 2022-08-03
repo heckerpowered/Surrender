@@ -2,7 +2,7 @@ package heckerpowered.surrender.common.content.block;
 
 import org.jetbrains.annotations.Nullable;
 
-import heckerpowered.surrender.common.content.entity.NeculearTnt;
+import heckerpowered.surrender.common.content.entity.NuclearTnt;
 import net.minecraft.core.BlockPos;
 import net.minecraft.core.Direction;
 import net.minecraft.sounds.SoundEvents;
@@ -43,7 +43,7 @@ public final class MiniCivilianNeculearTntBlock extends Block {
     public void onCaughtFire(BlockState state, Level level, BlockPos pos, @Nullable Direction direction,
             @Nullable LivingEntity igniter) {
         level.removeBlock(pos, false);
-        final var entity = new NeculearTnt(level, pos.getX() + 0.5D, pos.getY(), pos.getZ() + 0.5D, igniter);
+        final var entity = new NuclearTnt(level, pos.getX() + 0.5D, pos.getY(), pos.getZ() + 0.5D, igniter);
         level.playSound(null, entity.getX(), entity.getY(), entity.getZ(), SoundEvents.TNT_PRIMED, SoundSource.BLOCKS,
                 1.0F, 1.0F);
         level.gameEvent(igniter, GameEvent.PRIME_FUSE, pos);

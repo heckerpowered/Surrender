@@ -2,7 +2,7 @@ package heckerpowered.surrender.client;
 
 import javax.annotation.Nonnull;
 
-import heckerpowered.surrender.client.renderer.NeculearTntRenderer;
+import heckerpowered.surrender.client.renderer.NuclearTntRenderer;
 import heckerpowered.surrender.common.content.entity.SurrenderEntityType;
 import net.minecraftforge.api.distmarker.Dist;
 import net.minecraftforge.client.event.EntityRenderersEvent;
@@ -16,7 +16,7 @@ public final class ClientModEvents {
 
     @SubscribeEvent
     public static final void onRegisterRenderers(@Nonnull final EntityRenderersEvent.RegisterRenderers event) {
-        event.registerEntityRenderer(SurrenderEntityType.NECULEAR_TNT.get(), NeculearTntRenderer::new);
+        event.registerEntityRenderer(SurrenderEntityType.NECULEAR_TNT.get(), NuclearTntRenderer::new);
     }
 
 }

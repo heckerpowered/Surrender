@@ -13,7 +13,7 @@ public final class SurrenderCreativeModeTab extends CreativeModeTab {
 
     @Override
     public ItemStack makeIcon() {
-        return new ItemStack(SurrenderItems.NECULEAR_TNT.get());
+        return new ItemStack(SurrenderItems.NUCLEAR_TNT.get());
     }
 
 }

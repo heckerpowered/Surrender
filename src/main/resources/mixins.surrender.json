@@ -1,11 +1,12 @@
 {
     "required": true,
-    "package": "heckerpowered.surrender.common.core.mixin",
+    "package": "heckerpowered.surrender.common.mixin",
     "refmap": "mixins.surrender.refmap.json",
     "mixins": [
         "ItemStackMixin",
         "LivingEntityMixin",
-        "MobMixin"
+        "MobMixin",
+        "BrainMixin"
     ],
     "client": [],
     "server": [],

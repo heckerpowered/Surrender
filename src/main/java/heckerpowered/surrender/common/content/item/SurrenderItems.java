@@ -15,7 +15,7 @@ public final class SurrenderItems {
     public static final DeferredRegister<Item> DEFERRED_REGISTER = DeferredRegister.create(ForgeRegistries.ITEMS,
             SurrenderMod.MODID);
 
-    public static final RegistryObject<BlockItem> NECULEAR_TNT = DEFERRED_REGISTER.register("neculear_tnt",
+    public static final RegistryObject<BlockItem> NUCLEAR_TNT = DEFERRED_REGISTER.register("nuclear_tnt",
             () -> new BlockItem(SurrenderBlocks.NECULEAR_TNT.get(),
                     new Item.Properties().tab(SurrenderMod.CREATIVE_MODE_TAB)));
 

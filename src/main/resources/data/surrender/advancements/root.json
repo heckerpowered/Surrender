@@ -1,0 +1,17 @@
+{
+    "display": {
+        "announce_to_chat": true,
+        "background": "surrender:textures/item/tnt_side.png",
+        "description": {
+            "translate": "advancements.surrender.root.description"
+        },
+        "frame": "goal",
+        "icon": {
+            "item": "advancements.surrender.root.description"
+        },
+        "show_toast": true,
+        "title": {
+            "translate": "advancements.surrender.root.title"
+        }
+    }
+}

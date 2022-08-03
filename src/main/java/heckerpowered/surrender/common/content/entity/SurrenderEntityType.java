@@ -22,8 +22,8 @@ public final class SurrenderEntityType {
     public static final DeferredRegister<EntityType<?>> DEFERRED_REGISTER = DeferredRegister
             .create(ForgeRegistries.ENTITY_TYPES, SurrenderMod.MODID);
 
-    public static final RegistryObject<EntityType<NeculearTnt>> NECULEAR_TNT = DEFERRED_REGISTER
+    public static final RegistryObject<EntityType<NuclearTnt>> NECULEAR_TNT = DEFERRED_REGISTER
             .register("neculear_tnt",
-                    () -> EntityType.Builder.<NeculearTnt>of(NeculearTnt::new, MobCategory.MISC).fireImmune()
-                            .sized(0.98F, 0.98F).clientTrackingRange(10).updateInterval(10).build("neculear_tnt"));
+                    () -> EntityType.Builder.<NuclearTnt>of(NuclearTnt::new, MobCategory.MISC).fireImmune()
+                            .sized(0.98F, 0.98F).clientTrackingRange(10).updateInterval(10).build("nuclear_tnt"));
 }

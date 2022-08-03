@@ -6,8 +6,12 @@ import heckerpowered.surrender.common.SurrenderMod;
 import heckerpowered.surrender.common.content.effect.SurrenderMobEffects;
 import heckerpowered.surrender.common.network.SurrenderNetwork;
 import heckerpowered.surrender.common.network.clientbound.ClientboundDisplayItemActivationPacket;
+import heckerpowered.surrender.common.util.network.SurrenderNetworkUtil;
 import heckerpowered.surrender.common.util.player.PlayerUtil;
+import net.minecraft.core.particles.ParticleTypes;
 import net.minecraft.server.level.ServerPlayer;
+import net.minecraft.sounds.SoundEvents;
+import net.minecraft.sounds.SoundSource;
 import net.minecraft.world.effect.MobEffectInstance;
 import net.minecraft.world.effect.MobEffects;
 import net.minecraft.world.item.Item;
@@ -41,10 +45,14 @@ public final class ReverseFateItem extends Item {
 
             entity.setHealth(0.5F);
             entity.removeAllEffects();
-            entity.addEffect(new MobEffectInstance(MobEffects.MOVEMENT_SPEED, 100, 4, false, false));
-            entity.addEffect(new MobEffectInstance(MobEffects.INVISIBILITY, 100, 0, false, false));
-            entity.addEffect(new MobEffectInstance(MobEffects.ABSORPTION, 100, 1, false, false));
-            entity.addEffect(new MobEffectInstance(SurrenderMobEffects.UNTARGETABLE.get(), 100, 0, false, false));
+            entity.addEffect(new MobEffectInstance(MobEffects.MOVEMENT_SPEED, 60, 9, false, true));
+            entity.addEffect(new MobEffectInstance(MobEffects.INVISIBILITY, 60, 0, false, true));
+            entity.addEffect(new MobEffectInstance(MobEffects.ABSORPTION, 60, 1, false, true));
+            entity.addEffect(new MobEffectInstance(MobEffects.REGENERATION, 60, 1, false, true));
+            entity.addEffect(new MobEffectInstance(SurrenderMobEffects.UNTARGETABLE.get(), 60, 0, false, true));
+
+            SurrenderNetworkUtil.createTrackingEmitter(entity, ParticleTypes.TOTEM_OF_UNDYING, 30);
+            entity.level.playSound(null, entity, SoundEvents.TOTEM_USE, SoundSource.PLAYERS, 1.0F, 1.0F);
 
             if (entity instanceof final ServerPlayer player) {
                 final var foodData = player.getFoodData();

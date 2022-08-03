@@ -9,6 +9,7 @@ import org.slf4j.Marker;
 import org.slf4j.MarkerFactory;
 
 import heckerpowered.surrender.common.SurrenderMod;
+import heckerpowered.surrender.common.network.clientbound.ClientboundCreateTrackingEmitter;
 import heckerpowered.surrender.common.network.clientbound.ClientboundDisplayItemActivationPacket;
 import net.minecraft.core.BlockPos;
 import net.minecraft.network.FriendlyByteBuf;
@@ -196,5 +197,6 @@ public final class SurrenderNetwork {
     public static final void onCommonSetup(@Nonnull final FMLCommonSetupEvent event) {
         registerClientbound(ClientboundDisplayItemActivationPacket.class,
                 ClientboundDisplayItemActivationPacket::decode);
+        registerClientbound(ClientboundCreateTrackingEmitter.class, ClientboundCreateTrackingEmitter::decode);
     }
 }
