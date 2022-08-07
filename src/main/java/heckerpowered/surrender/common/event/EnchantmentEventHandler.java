@@ -818,7 +818,7 @@ public final class EnchantmentEventHandler {
             //
             if (persistentData.getBoolean("surrender_undying") && (source instanceof BadRespawnPointDamage
                     || source instanceof EntityDamageSource)) {
-                source.bypassArmor().bypassEnchantments().bypassInvul().bypassMagic();
+                source.bypassArmor().bypassEnchantments().bypassMagic();
             }
         }
     }
