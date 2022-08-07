@@ -11,6 +11,8 @@ import net.minecraft.advancements.CriteriaTriggers;
 import net.minecraft.advancements.CriterionTrigger;
 import net.minecraft.advancements.critereon.PlayerTrigger;
 import net.minecraft.resources.ResourceLocation;
+import net.minecraft.server.level.ServerPlayer;
+import net.minecraftforge.event.entity.player.PlayerEvent.PlayerLoggedInEvent;
 import net.minecraftforge.eventbus.api.SubscribeEvent;
 import net.minecraftforge.fml.common.Mod;
 import net.minecraftforge.fml.event.lifecycle.FMLCommonSetupEvent;
@@ -22,6 +24,7 @@ public final class SurrenderCriteriaTriggers {
     private SurrenderCriteriaTriggers() {
     }
 
+    public static final PlayerTrigger LOGGED_IN = register("logged_in", PlayerTrigger::new);
     public static final PlayerTrigger NUCLEAR_IMPACT = register("nuclear_impact", PlayerTrigger::new);
 
     private static final <T extends CriterionTrigger<?>> T register(@Nonnull final String name,
@@ -34,5 +37,18 @@ public final class SurrenderCriteriaTriggers {
     @SubscribeEvent
     public static final void onCommonSetup(@Nonnull final FMLCommonSetupEvent event) {
         event.enqueueWork(() -> DEFERRED_REGISTER.forEach(CriteriaTriggers::register));
+    }
+
+    @Mod.EventBusSubscriber
+    private static final class PlayerLoggedInEventHandler {
+        private PlayerLoggedInEventHandler() {
+        }
+
+        @SubscribeEvent
+        public static final void onPlayerLoggedIn(@Nonnull final PlayerLoggedInEvent event) {
+            if (event.getEntity() instanceof final ServerPlayer player) {
+                SurrenderCriteriaTriggers.LOGGED_IN.trigger(player);
+            }
+        }
     }
 }

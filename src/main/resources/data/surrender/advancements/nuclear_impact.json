@@ -1,12 +1,21 @@
 {
     "parent": "surrender:root",
     "criteria": {
-        "trigger": "surrender:nuclear_impact"
+        "automatic": {
+            "conditions": {},
+            "trigger": "surrender:nuclear_impact"
+        }
     },
     "display": {
         "description": {
             "translate": "advancements.surrender.nuclear_impact.description"
         },
-        "icon": {}
+        "title": {
+            "translate": "advancements.surrender.nuclear_impact.title"
+        },
+        "icon": {
+            "item": "minecraft:suspicious_stew"
+        },
+        "frame": "challenge"
     }
 }

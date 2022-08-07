@@ -19,5 +19,7 @@
     "block.surrender.nuclear_tnt": "小型民用核武器",
     "enchantment.surrender.parry": "格挡",
     "effect.surrender.untargetable": "无法选取",
-    "item.surrender.reverse_fate": "逆天改命"
+    "item.surrender.reverse_fate": "逆天改命",
+    "advancements.surrender.nuclear_impact.description": "被核武器的负面效果影响",
+    "advancements.surrender.nuclear_impact.title": "我有点儿不舒服"
 }

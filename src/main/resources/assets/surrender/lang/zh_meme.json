@@ -19,5 +19,7 @@
     "block.surrender.nuclear_tnt": "小型大伊万",
     "enchantment.surrender.parry": "格挡",
     "effect.surrender.untargetable": "无法选取",
-    "item.surrender.reverse_fate": "一次性安全用物品"
+    "item.surrender.reverse_fate": "一次性安全用物品",
+    "advancements.surrender.nuclear_impact.description": "被核武器的负面效果影响",
+    "advancements.surrender.nuclear_impact.title": "我有点儿不舒服"
 }

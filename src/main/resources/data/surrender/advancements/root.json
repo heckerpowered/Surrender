@@ -1,13 +1,19 @@
 {
+    "criteria": {
+        "automatic": {
+            "conditions": {},
+            "trigger": "surrender:logged_in"
+        }
+    },
     "display": {
-        "announce_to_chat": true,
-        "background": "surrender:textures/item/tnt_side.png",
+        "announce_to_chat": false,
+        "background": "minecraft:textures/block/tnt_side.png",
         "description": {
             "translate": "advancements.surrender.root.description"
         },
         "frame": "goal",
         "icon": {
-            "item": "advancements.surrender.root.description"
+            "item": "surrender:nuclear_tnt"
         },
         "show_toast": true,
         "title": {

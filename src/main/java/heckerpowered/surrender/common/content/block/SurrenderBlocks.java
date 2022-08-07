@@ -18,6 +18,6 @@ public final class SurrenderBlocks {
     public static final DeferredRegister<Block> DEFERRED_REGISTER = DeferredRegister.create(ForgeRegistries.BLOCKS,
             SurrenderMod.MODID);
 
-    public static final RegistryObject<Block> NECULEAR_TNT = DEFERRED_REGISTER.register("neculear_tnt",
+    public static final RegistryObject<Block> NECULEAR_TNT = DEFERRED_REGISTER.register("nuclear_tnt",
             MiniCivilianNeculearTntBlock::new);
 }

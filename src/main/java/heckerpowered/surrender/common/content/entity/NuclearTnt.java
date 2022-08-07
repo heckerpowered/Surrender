@@ -9,6 +9,7 @@ import org.slf4j.Marker;
 import org.slf4j.MarkerFactory;
 
 import heckerpowered.surrender.common.SurrenderMod;
+import heckerpowered.surrender.common.content.advancement.SurrenderCriteriaTriggers;
 import heckerpowered.surrender.common.content.level.NuclearExplosion;
 import net.minecraft.FieldsAreNonnullByDefault;
 import net.minecraft.MethodsReturnNonnullByDefault;
@@ -18,6 +19,7 @@ import net.minecraft.network.protocol.Packet;
 import net.minecraft.network.syncher.EntityDataAccessor;
 import net.minecraft.network.syncher.EntityDataSerializers;
 import net.minecraft.network.syncher.SynchedEntityData;
+import net.minecraft.server.level.ServerPlayer;
 import net.minecraft.world.effect.MobEffectInstance;
 import net.minecraft.world.effect.MobEffects;
 import net.minecraft.world.entity.Entity;
@@ -259,7 +261,7 @@ public final class NuclearTnt extends Entity {
         final var position = position();
         for (final var entity : level.getEntities(igniter,
                 new AABB(position, position).inflate(getExplosionRadius() * 2))) {
-            if (entity instanceof LivingEntity living) {
+            if (entity instanceof final LivingEntity living) {
                 living.addEffect(new MobEffectInstance(MobEffects.POISON, 600));
                 living.addEffect(new MobEffectInstance(MobEffects.WITHER, 600));
                 living.addEffect(new MobEffectInstance(MobEffects.MOVEMENT_SLOWDOWN, 600));
@@ -272,6 +274,10 @@ public final class NuclearTnt extends Entity {
                 living.addEffect(new MobEffectInstance(MobEffects.WEAKNESS, 600));
                 living.addEffect(new MobEffectInstance(MobEffects.UNLUCK, 600));
 
+                if (entity instanceof final ServerPlayer player) {
+                    SurrenderCriteriaTriggers.NUCLEAR_IMPACT.trigger(player);
+                }
+
                 if (living.distanceToSqr(this) <= Math.pow(getExplosionRadius(), 2) * 2 /* 24 * 24 = 576 */) {
                     living.getPersistentData().putBoolean(NUCLEAR_TNT_IMPACT_STRING, true);
                 }
@@ -283,7 +289,7 @@ public final class NuclearTnt extends Entity {
     }
 
     @SubscribeEvent
-    public static final void onLivingAttack(@Nonnull final LivingHurtEvent event) {
+    public static final void onLivingHurt(@Nonnull final LivingHurtEvent event) {
         final var entity = event.getEntity();
         if (entity.getPersistentData().getBoolean(NUCLEAR_TNT_IMPACT_STRING)) {
             entity.getPersistentData().remove(NUCLEAR_TNT_IMPACT_STRING);
