@@ -43,6 +43,10 @@ public final class ReverseFateItem extends Item {
 
     @SubscribeEvent
     public static final void onLivingDeath(@Nonnull final LivingDeathEvent event) {
+        if (event.getSource().isBypassInvul()) {
+            return;
+        }
+
         final var entity = event.getEntity();
         PlayerUtil.search(entity, stack -> stack.getItem() instanceof ReverseFateItem).ifPresent(stack -> {
             event.setCanceled(true);
