@@ -6,7 +6,7 @@ import net.minecraft.world.item.Item;
 public final class ReverseFateDisabledItem extends Item {
 
     public ReverseFateDisabledItem() {
-        super(new Properties().stacksTo(1).tab(SurrenderMod.CREATIVE_MODE_TAB));
+        super(new Properties().tab(SurrenderMod.CREATIVE_MODE_TAB));
     }
 
 }

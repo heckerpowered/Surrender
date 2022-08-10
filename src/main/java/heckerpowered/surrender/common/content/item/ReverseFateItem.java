@@ -38,7 +38,7 @@ import net.minecraftforge.fml.common.Mod;
 public final class ReverseFateItem extends Item {
 
     public ReverseFateItem() {
-        super(new Properties().stacksTo(1).tab(SurrenderMod.CREATIVE_MODE_TAB).rarity(Rarity.UNCOMMON));
+        super(new Properties().tab(SurrenderMod.CREATIVE_MODE_TAB).rarity(Rarity.UNCOMMON));
     }
 
     @SubscribeEvent
