@@ -21,4 +21,7 @@ public final class SurrenderItems {
 
     public static final RegistryObject<ReverseFateItem> REVERSE_FATE = DEFERRED_REGISTER.register("reverse_fate",
             ReverseFateItem::new);
+
+    public static final RegistryObject<ReverseFateDisabledItem> REVERSE_FATE_DISABLED = DEFERRED_REGISTER
+            .register("reverse_fate_disabled", ReverseFateDisabledItem::new);
 }

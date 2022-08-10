@@ -1,0 +1,14 @@
+{
+    "type": "minecraft:crafting_shapeless",
+    "ingredients": [
+        {
+            "item": "minecraft:totem_of_undying"
+        },
+        {
+            "item": "surrender:reverse_fate_disabled"
+        }
+    ],
+    "result": {
+        "item": "surrender:reverse_fate"
+    }
+}

@@ -23,11 +23,16 @@ import net.minecraftforge.eventbus.api.SubscribeEvent;
 import net.minecraftforge.fml.common.Mod;
 
 /**
- * Reverse fate is similar to {@link Items#TOTEM_OF_UNDYING}, The difference is that "Reverse Fate" only
+ * Reverse fate is similar to {@link Items#TOTEM_OF_UNDYING}, The difference is
+ * that "Reverse Fate" only
  * needs to be in the item bar to be effective, and the effect is different.
- * <p> When you take a damage that can put you into dying state,clear the effects on you and the damage will
- * be converted into a poison effect that lasts for 20 seconds, while grants a short time of invisibility and
- * speed effect to allow you to escape, the above effect have no particle effect.
+ * <p>
+ * When you take a damage that can put you into dying state,clear the effects on
+ * you and the damage will
+ * be converted into a poison effect that lasts for 20 seconds, while grants a
+ * short time of invisibility and
+ * speed effect to allow you to escape, the above effect have no particle
+ * effect.
  */
 @Mod.EventBusSubscriber
 public final class ReverseFateItem extends Item {
@@ -62,6 +67,8 @@ public final class ReverseFateItem extends Item {
                 SurrenderNetwork.sendTo(
                         new ClientboundDisplayItemActivationPacket(new ItemStack(SurrenderItems.REVERSE_FATE.get())),
                         player);
+
+                player.addItem(new ItemStack(SurrenderItems.REVERSE_FATE_DISABLED.get()));
             }
         });
     }
