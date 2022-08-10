@@ -673,17 +673,17 @@ public final class EnchantmentEventHandler {
     @SubscribeEvent
     public static void onLivingDeath(final LivingDeathEvent event) {
         final var entity = event.getEntity();
-        final var source = event.getSource().getEntity();
+        final var source = event.getSource();
+        final var sourceEntity = source.getEntity();
         final var data = entity.getPersistentData();
 
         if (entity.level.isClientSide) {
             return;
         }
 
-        if (source != null && source instanceof Player player) {
+        if (sourceEntity != null && sourceEntity instanceof Player player) {
             final var mainHandItem = player.getMainHandItem();
             final var offHandItem = player.getOffhandItem();
-            final var sourceEntity = event.getEntity();
 
             //
             // If both main hand item and off hand item have enchantment "Seeker",
@@ -695,16 +695,16 @@ public final class EnchantmentEventHandler {
                     offHandItem);
             if (mainHandSeekerLevel > 0) {
                 var tag = mainHandItem.getOrCreateTag();
-                tag.putDouble("surrender_seeker_x", sourceEntity.getX());
-                tag.putDouble("surrender_seeker_y", sourceEntity.getY());
-                tag.putDouble("surrender_seeker_z", sourceEntity.getZ());
+                tag.putDouble("surrender_seeker_x", entity.getX());
+                tag.putDouble("surrender_seeker_y", entity.getY());
+                tag.putDouble("surrender_seeker_z", entity.getZ());
                 tag.putBoolean("surrender_seeker_available", true);
                 tag.putInt("surrender_seeker_level", mainHandSeekerLevel);
             } else if (offHandSeekerLevel > 0) {
                 var tag = offHandItem.getOrCreateTag();
-                tag.putDouble("surrender_seeker_x", sourceEntity.getX());
-                tag.putDouble("surrender_seeker_y", sourceEntity.getY());
-                tag.putDouble("surrender_seeker_z", sourceEntity.getZ());
+                tag.putDouble("surrender_seeker_x", entity.getX());
+                tag.putDouble("surrender_seeker_y", entity.getY());
+                tag.putDouble("surrender_seeker_z", entity.getZ());
                 tag.putBoolean("surrender_seeker_available", true);
                 tag.putInt("surrender_seeker_level", offHandSeekerLevel);
             }
@@ -713,7 +713,7 @@ public final class EnchantmentEventHandler {
         //
         // Determine whether undying is activating.
         //
-        if (!data.getBoolean("surrender_undying")) {
+        if (!data.getBoolean("surrender_undying") && source.isBypassInvul()) {
             final var undyingLevel = EnchantmentHelper.getEnchantmentLevel(SurrenderEnchantments.UNDYING.get(), entity);
             if (undyingLevel > 0) {
                 //
@@ -771,7 +771,7 @@ public final class EnchantmentEventHandler {
             }
         }
 
-        if (source != null && source instanceof Player player) {
+        if (sourceEntity != null && sourceEntity instanceof Player player) {
             final var experienceLevel = EnchantmentHelper.getEnchantmentLevel(SurrenderEnchantments.EXPERIENCE.get(),
                     player);
             if (experienceLevel > 0) {
