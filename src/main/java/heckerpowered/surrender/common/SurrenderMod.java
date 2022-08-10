@@ -46,7 +46,8 @@ public class SurrenderMod {
     public static final Marker MARKER = MarkerFactory.getMarker("SURRENDERMOD");
 
     /**
-     * Set our version number to match the mods.toml file, which matches the one in our build.gradle
+     * Set our version number to match the mods.toml file, which matches the one in
+     * our build.gradle
      */
     public static final Lazy<ArtifactVersion> VERSION = Lazy
             .of(ModLoadingContext.get().getActiveContainer().getModInfo()::getVersion);
@@ -72,14 +73,17 @@ public class SurrenderMod {
         SurrenderBlocks.DEFERRED_REGISTER.register(eventBus);
         SurrenderEntityType.DEFERRED_REGISTER.register(eventBus);
         SurrenderMobEffects.DEFERRED_REGISTER.register(eventBus);
+        LOGGER.info("Game content registered");
     }
 
     /**
-     * Returns a new resource location, where {@link ResourceLocation#getNamespace()} is
+     * Returns a new resource location, where
+     * {@link ResourceLocation#getNamespace()} is
      * {@link #MODID} and {@link ResourceLocation#getPath()} is {@code path}
      *
      * @param path {@link ResourceLocation#getPath()} will the path.
-     * @return A new resource location with {@link #MODID} as namespace, and {@code path} as the path.
+     * @return A new resource location with {@link #MODID} as namespace, and
+     *         {@code path} as the path.
      */
     public static final ResourceLocation resource(@Nonnull final String path) {
         return new ResourceLocation(MODID, path);

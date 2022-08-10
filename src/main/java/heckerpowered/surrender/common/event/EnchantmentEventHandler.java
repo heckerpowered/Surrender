@@ -133,7 +133,8 @@ public final class EnchantmentEventHandler {
                 player.setDeltaMovement(movement);
 
                 //
-                // Set the player's hurtMarked field to true, the player's movement will be synchronized
+                // Set the player's hurtMarked field to true, the player's movement will be
+                // synchronized
                 // to client next tick, and this field will be set to false.
                 //
                 player.hurtMarked = true;
@@ -165,7 +166,8 @@ public final class EnchantmentEventHandler {
 
                         if (livingVictim instanceof ServerPlayer serverPlayer) {
                             //
-                            // Set the player's hurtMarked field to true, the player's movement will be synchronized
+                            // Set the player's hurtMarked field to true, the player's movement will be
+                            // synchronized
                             // to client next tick, and this field will be set to false.
                             //
                             player.hurtMarked = true;
@@ -216,7 +218,8 @@ public final class EnchantmentEventHandler {
             final var last_active_time = tag.getInt("surrender_blink_last_active_time");
 
             //
-            // No cooldown recorded, or the cooldown is over, so the "Blink" enchantment can be activated.
+            // No cooldown recorded, or the cooldown is over, so the "Blink" enchantment can
+            // be activated.
             //
             if (last_active_time == 0 || last_active_time > player.tickCount
                     || last_active_time + blink_cooldown < player.tickCount) {
@@ -265,7 +268,8 @@ public final class EnchantmentEventHandler {
                                 forward.z * multipier);
 
                         //
-                        // Set the player's hurtMarked field to true, the player's movement will be synchronized
+                        // Set the player's hurtMarked field to true, the player's movement will be
+                        // synchronized
                         // to client next tick, and this field will be set to false.
                         //
                         player.hurtMarked = true;
@@ -361,7 +365,8 @@ public final class EnchantmentEventHandler {
                     player.setDeltaMovement(0, player.getDeltaMovement().y, 0);
 
                     //
-                    // Set the player's hurtMarked field to true, the player's movement will be synchronized
+                    // Set the player's hurtMarked field to true, the player's movement will be
+                    // synchronized
                     // to client next tick, and this field will be set to false.
                     //
                     player.hurtMarked = true;
@@ -416,7 +421,8 @@ public final class EnchantmentEventHandler {
                         player.setDeltaMovement(forward.x * 2.5, player.getDeltaMovement().y, forward.z * 2.5);
 
                         //
-                        // Set the player's hurtMarked field to true, the player's movement will be synchronized
+                        // Set the player's hurtMarked field to true, the player's movement will be
+                        // synchronized
                         // to client next tick, and this field will be set to false.
                         //
                         player.hurtMarked = true;
@@ -760,7 +766,8 @@ public final class EnchantmentEventHandler {
                     }
 
                     //
-                    // Mark "Undying" enchantment is not activating so that it can be activated again.
+                    // Mark "Undying" enchantment is not activating so that it can be activated
+                    // again.
                     //
                     data.putBoolean("surrender_undying", false);
 
