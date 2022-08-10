@@ -1,0 +1,29 @@
+{
+    "parent": "surrender:root",
+    "criteria": {
+        "reverse_fate": {
+            "conditions": {
+                "items": [
+                    {
+                        "items": [
+                            "surrender:reverse_fate_disabled"
+                        ]
+                    }
+                ]
+            },
+            "trigger": "minecraft:inventory_changed"
+        }
+    },
+    "display": {
+        "description": {
+            "translate": "advancements.surrender.reverse_fate.description"
+        },
+        "title": {
+            "translate": "advancements.surrender.reverse_fate.title"
+        },
+        "icon": {
+            "item": "surrender:reverse_fate"
+        },
+        "frame": "task"
+    }
+}

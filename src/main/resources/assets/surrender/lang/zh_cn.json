@@ -24,5 +24,7 @@
     "advancements.surrender.root.description": "这是什么?",
     "advancements.surrender.root.title": "征服者",
     "advancements.surrender.nuclear_impact.description": "被核武器的负面效果影响",
-    "advancements.surrender.nuclear_impact.title": "我有点儿不舒服"
+    "advancements.surrender.nuclear_impact.title": "我有点儿不舒服",
+    "advancements.surrender.reverse_fate.description": "使用逆天改命抵挡一次死亡",
+    "advancements.surrender.reverse_fate.title": "逆天改命"
 }

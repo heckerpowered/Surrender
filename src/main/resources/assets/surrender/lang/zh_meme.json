@@ -22,5 +22,7 @@
     "item.surrender.reverse_fate": "一次性安全用物品",
     "item.surrender.reverse_fate_disabled": "已经用过的一次性安全用物品",
     "advancements.surrender.nuclear_impact.description": "被核武器的负面效果影响",
-    "advancements.surrender.nuclear_impact.title": "我有点儿不舒服"
+    "advancements.surrender.nuclear_impact.title": "我有点儿不舒服",
+    "advancements.surrender.reverse_fate.description": "使用安全性一次性物品抵挡一次死亡",
+    "advancements.surrender.reverse_fate.title": "AWHL"
 }

@@ -24,5 +24,7 @@
     "advancements.surrender.root.description": "Welcome to surrender mod",
     "advancements.surrender.root.title": "Surrender",
     "advancements.surrender.nuclear_impact.description": "Affected by the harmful effects of nuclear tnt",
-    "advancements.surrender.nuclear_impact.title": "I'm a little uncomfortable"
+    "advancements.surrender.nuclear_impact.title": "I'm a little uncomfortable",
+    "advancements.surrender.reverse_fate.description": "Use a Reverse Fate to cheat death",
+    "advancements.surrender.reverse_fate.title": "Reverse Fate"
 }
