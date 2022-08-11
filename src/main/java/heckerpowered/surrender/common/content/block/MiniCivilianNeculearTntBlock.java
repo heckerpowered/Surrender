@@ -14,6 +14,7 @@ import net.minecraft.world.entity.LivingEntity;
 import net.minecraft.world.entity.player.Player;
 import net.minecraft.world.entity.projectile.Projectile;
 import net.minecraft.world.item.Items;
+import net.minecraft.world.level.Explosion;
 import net.minecraft.world.level.Level;
 import net.minecraft.world.level.block.Block;
 import net.minecraft.world.level.block.SoundType;
@@ -26,8 +27,10 @@ import net.minecraft.world.level.material.Material;
 import net.minecraft.world.phys.BlockHitResult;
 
 /**
- * Mini-Civilian Neculear Tnt block, when ignited, it generates an explosion with a
- * range of 50m does not cause damage to the entity that ignited it, but destroys the
+ * Mini-Civilian Neculear Tnt block, when ignited, it generates an explosion
+ * with a
+ * range of 50m does not cause damage to the entity that ignited it, but
+ * destroys the
  * blocks and has the same appearance and time of ignition as Tnt.
  *
  * @author Heckerpowered
@@ -109,5 +112,14 @@ public final class MiniCivilianNeculearTntBlock extends Block {
     @Override
     protected void createBlockStateDefinition(Builder<Block, BlockState> builder) {
         builder.add(BlockStateProperties.UNSTABLE);
+    }
+
+    @Override
+    public void wasExploded(Level level, BlockPos pos, Explosion explosion) {
+        if (level.isClientSide) {
+            return;
+        }
+
+        onCaughtFire(level.getBlockState(pos), level, pos, null, null);
     }
 }

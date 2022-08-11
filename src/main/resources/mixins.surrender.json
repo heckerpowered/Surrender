@@ -1,7 +1,9 @@
 {
     "required": true,
+    "minVersion": "0.8",
     "package": "heckerpowered.surrender.common.mixin",
     "refmap": "mixins.surrender.refmap.json",
+    "compatibilityLevel": "JAVA_17",
     "mixins": [
         "ItemStackMixin",
         "LivingEntityMixin",
