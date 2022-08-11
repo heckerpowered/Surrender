@@ -35,9 +35,9 @@ import net.minecraft.world.phys.BlockHitResult;
  *
  * @author Heckerpowered
  */
-public final class MiniCivilianNeculearTntBlock extends Block {
+public final class MiniCivilianNuclearTntBlock extends Block {
 
-    public MiniCivilianNeculearTntBlock() {
+    public MiniCivilianNuclearTntBlock() {
         super(BlockBehaviour.Properties.of(Material.EXPLOSIVE).instabreak().sound(SoundType.GRASS));
         registerDefaultState(defaultBlockState().setValue(BlockStateProperties.UNSTABLE, false));
     }

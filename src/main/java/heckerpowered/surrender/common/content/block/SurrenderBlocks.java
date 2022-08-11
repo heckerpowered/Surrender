@@ -7,7 +7,8 @@ import net.minecraftforge.registries.ForgeRegistries;
 import net.minecraftforge.registries.RegistryObject;
 
 /**
- * Surrender mod's block register class, which is a static class, do not instantiate it.
+ * Surrender mod's block register class, which is a static class, do not
+ * instantiate it.
  *
  * @author Heckerpowered
  */
@@ -19,5 +20,5 @@ public final class SurrenderBlocks {
             SurrenderMod.MODID);
 
     public static final RegistryObject<Block> NECULEAR_TNT = DEFERRED_REGISTER.register("nuclear_tnt",
-            MiniCivilianNeculearTntBlock::new);
+            MiniCivilianNuclearTntBlock::new);
 }
